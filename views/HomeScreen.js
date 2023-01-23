@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Button } from '@react-native-material/core';
-import { StatusBar } from 'expo-status-bar';
 import { useSessionStorage } from '../components/useSessionStorage';
 
 function HomeScreen() {
@@ -9,21 +8,33 @@ function HomeScreen() {
 
     if (!sessionStarted) {
       return (
-        <>
-          <Text>test</Text>
-          // on press of button, set session to true and alert user
-            <Button onPress={() => {setSessionStarted(true); navigation.navigate('Map');}}>Start Session</Button>
-          <StatusBar style="auto" />
-        </>
+        <View style={styles.container}>
+            <Button 
+            title="Start Session"
+            onPress={() => {setSessionStarted(true); navigation.navigate('Map');}}
+            />
+        </View>
       );
     }
-  
-    return (
-      <View style={styles.container}>
-         <Text>test</Text>
-        <StatusBar style="auto" />
-      </View>
-    );
+    else{
+      return (
+        <View style={styles.container}>
+            <Text>Session en cours</Text>
+            <Button 
+            title="Stop Session"
+            onPress={() => {setSessionStarted(false); navigation.navigate('Home');}}/>
+        </View>
+      );
+    }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 export default HomeScreen;
