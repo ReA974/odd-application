@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Button } from '@react-native-material/core';
-import { useSessionStorage } from '../components/useSessionStorage';
+import { useSessionStorage } from '../services/useSessionStorage';
+import { styles } from '../App';
 
-function HomeScreen() {
+function HomeScreen({navigation}) {
     const [sessionStarted, setSessionStarted] = useSessionStorage('session', false);
 
     if (!sessionStarted) {
@@ -16,7 +17,7 @@ function HomeScreen() {
         </View>
       );
     }
-    else{
+    else {
       return (
         <View style={styles.container}>
             <Text>Session en cours</Text>
@@ -28,13 +29,5 @@ function HomeScreen() {
     }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 export default HomeScreen;
