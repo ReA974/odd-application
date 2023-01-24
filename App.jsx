@@ -38,9 +38,9 @@ export default function App() {
             tabBarInactiveTintColor: 'gray',
           })}
         >
-          <Tab.Screen name="Home" component={HomeScreen} />
-          <Tab.Screen name="Map" component={Map} />
-          <Tab.Screen name="ODD" component={ODDScreen} />
+          <Tab.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+          <Tab.Screen name="Map" component={Map} options={{ headerShown: false }} />
+          <Tab.Screen name="ODD" component={ODDScreen} options={{ headerShown: false }} />
         </Tab.Navigator>
       </NavigationContainer>
     </PaperProvider>

@@ -11,6 +11,9 @@ import {
 import ODDContent from './helpers/ODDContent';
 
 const styleODD = StyleSheet.create({
+  root: {
+    marginTop: 40,
+  },
   card: {
     margin: 20,
     padding: 0,
@@ -24,7 +27,7 @@ const styleODD = StyleSheet.create({
 
 function ODDScreen() {
   return (
-    <ScrollView>
+    <ScrollView style={styleODD.root}>
       {Object.keys(ODDContent).map((keyName) => (
         <Card key={keyName} style={styleODD.card}>
           <Card.Cover
