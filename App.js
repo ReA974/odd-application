@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HomeScreen from './views/HomeScreen';
-import MapView from './views/MapView';
+import Map from './views/Map';
 
 const Stack = createNativeStackNavigator();
 
@@ -12,7 +12,7 @@ export default function App() {
     <NavigationContainer>
         <Stack.Navigator >
           <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="Map" component={MapView} />
+          <Stack.Screen name="Map" component={Map} />
         </Stack.Navigator>
     </NavigationContainer>
   );
@@ -24,5 +24,9 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  map: {
+    width: '100%',
+    height: '100%',
   },
 });
