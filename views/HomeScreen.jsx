@@ -1,10 +1,10 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import * as React from 'react';
 import { View, Text } from 'react-native';
-import { Button } from '@react-native-material/core';
+import { Button } from 'react-native-paper';
 import PropTypes from 'prop-types';
 import { useSessionStorage } from '../services/useSessionStorage';
-import { styles } from '../App.jsx';
+import { styles } from '../App';
 
 function HomeScreen({ navigation }) {
   const [sessionStarted, setSessionStarted] = useSessionStorage('session', false);
@@ -13,9 +13,11 @@ function HomeScreen({ navigation }) {
     return (
       <View style={styles.container}>
         <Button
-          title="Start Session"
+          mode="contained"
           onPress={() => { setSessionStarted(true); navigation.navigate('Map'); }}
-        />
+        >
+          Start Session
+        </Button>
       </View>
     );
   }
@@ -24,9 +26,11 @@ function HomeScreen({ navigation }) {
     <View style={styles.container}>
       <Text>Session en cours</Text>
       <Button
-        title="Stop Session"
+        mode="contained"
         onPress={() => { setSessionStarted(false); navigation.navigate('Home'); }}
-      />
+      >
+        Stop session
+      </Button>
     </View>
   );
 }
