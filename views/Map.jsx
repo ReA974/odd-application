@@ -63,10 +63,23 @@ function Map() {
   }, []);
 
   if (location !== null) {
+    // show road names
+    const mapStyle = [
+      {
+        featureType: 'poi',
+        stylers: [
+          {
+            visibility: 'off',
+          },
+        ],
+      },
+    ];
+
     return (
       <View style={styles.container}>
         <MapView
           style={styles.map}
+          customMapStyle={mapStyle}
           provider={PROVIDER_GOOGLE}
           initialRegion={{
             latitude: location.coords.latitude,
@@ -115,16 +128,7 @@ function Map() {
                 </Marker>
               ))
             )
-        }
-          <Marker
-            coordinate={{
-              latitude: location.coords.latitude,
-              longitude: location.coords.longitude,
-            }}
-            title="VOTRE POSITION INITALE"
-            description="Description de votre position initiale"
-          />
-
+          }
         </MapView>
       </View>
     );

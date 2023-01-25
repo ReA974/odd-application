@@ -1,6 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import * as React from 'react';
-import { Text, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Text, Button } from 'react-native-paper';
+import { auth } from '../services/firebaseConfig';
+import * as timerSession from '../services/timerSession';
 
 const styles = StyleSheet.create({
   container: {
@@ -12,11 +15,14 @@ const styles = StyleSheet.create({
 });
 
 function HomeScreen() {
-  // const [sessionStarted, setSessionStarted] = useSessionStorage('session', false);
-
+  const user = auth.currentUser;
   return (
     <View style={styles.container}>
-      <Text>COUCOU</Text>
+      <Text>Home Screen</Text>
+      <Button mode="contained" onPress={() => { auth.signOut(); }}> Déconnexion</Button>
+      <Button mode="contained" onPress={() => { timerSession.startTimer(user); }}> Start</Button>
+      <Button mode="contained" onPress={() => { timerSession.stopTimer(user); }}> Stop</Button>
+      <Button mode="contained" onPress={() => { timerSession.getDeltaTime(user); }}> Get Time Delta</Button>
     </View>
   );
 }
