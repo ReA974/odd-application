@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 function Map() {
   
   const [location, setLocation] = useState(null)
-
+  const [errorMsg, setErrorMsg] = useState(null);
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -17,9 +17,8 @@ function Map() {
         setErrorMsg('Permission to access location was denied');
         return;
       }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
+      let Templocation = await Location.getCurrentPositionAsync({});
+      setLocation(Templocation);
     })();
   }, []);
 
@@ -29,12 +28,12 @@ function Map() {
       <MapView
         style={styles.map}
         initialRegion={{
-          latitude: 46.323,
-          longitude: -0.46,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.04,
         }}
-
+        
         showsMyLocationButton = {true}
         showsUserLocation = {true}
         showsCompass = {true}

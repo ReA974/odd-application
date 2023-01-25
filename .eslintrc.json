@@ -19,6 +19,7 @@
         "react-native"
     ],
     "rules": {
-        "import/no-cycle": false
+        "import/no-cycle": 0,
+        "import/no-extraneous-dependencies": 0
     }
 }
