@@ -3,7 +3,7 @@ import * as React from 'react';
 import { View, Text } from 'react-native';
 import { Button } from 'react-native-paper';
 import PropTypes from 'prop-types';
-import { useSessionStorage } from '../services/useSessionStorage';
+import useSessionStorage from '../services/useSessionStorage';
 import { styles } from '../App';
 
 function HomeScreen({ navigation }) {
