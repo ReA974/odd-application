@@ -36,7 +36,7 @@ function HomeScreen({ navigation }) {
 }
 
 HomeScreen.propTypes = {
-  navigation: PropTypes.instanceOf(Object),
+  navigation: PropTypes.instanceOf(Object).isRequired,
 };
 
 export default HomeScreen;

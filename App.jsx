@@ -54,8 +54,4 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  map: {
-    width: '100%',
-    height: '100%',
-  },
 });
