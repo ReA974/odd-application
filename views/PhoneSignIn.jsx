@@ -5,8 +5,16 @@ import {
 import PropTypes from 'prop-types';
 import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-firebase-recaptcha';
 import { PhoneAuthProvider, signInWithCredential } from 'firebase/auth';
-import { app, auth } from '../config/firebaseConfig';
-import { styles } from '../App';
+import { app, auth } from '../services/firebaseConfig';
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 function PhoneSignIn({ navigation }) {
   const recaptchaVerifier = React.useRef(null);
