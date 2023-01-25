@@ -33,40 +33,44 @@ function PhoneSignIn({ navigation }) {
   if (!isSignedIn) {
     return (
       <View style={styles.container}>
-        <FirebaseRecaptchaVerifierModal
-          ref={recaptchaVerifier}
-          firebaseConfig={firebaseConfig}
-          attemptInvisibleVerification={attemptInvisibleVerification}
-        />
-        <Text style={{ marginTop: 20 }}>Entrer votre numéro</Text>
-        <TextInput
-          style={{ marginVertical: 10, fontSize: 17 }}
-          placeholder="+33 6 12 34 56 78"
-          autoFocus
-          autoCompleteType="tel"
-          keyboardType="phone-pad"
-          textContentType="telephoneNumber"
-          onChangeText={setPhoneNumber}
-        />
-        <Button
-          title="Envoyer le sms le vérification"
-          disabled={!phoneNumber}
-          onPress={async () => {
-            try {
-              const phoneProvider = new PhoneAuthProvider(auth);
-              const tempVerificationid = await phoneProvider.verifyPhoneNumber(
-                phoneNumber,
-                recaptchaVerifier.current,
-              );
-              setVerificationId(tempVerificationid);
-              showMessage({
-                text: 'Un sms de vérification à été envoyé sur votre téléphone.',
-              });
-            } catch (err) {
-              showMessage({ text: `Error: ${err.message}`, color: 'red' });
-            }
-          }}
-        />
+        {!verificationId ? (
+          <>
+            <FirebaseRecaptchaVerifierModal
+              ref={recaptchaVerifier}
+              firebaseConfig={firebaseConfig}
+              attemptInvisibleVerification={attemptInvisibleVerification}
+            />
+            <Text style={{ marginTop: 20 }}>Entrer votre numéro</Text>
+            <TextInput
+              style={{ marginVertical: 10, fontSize: 17 }}
+              placeholder="+33 6 12 34 56 78"
+              autoFocus
+              autoCompleteType="tel"
+              keyboardType="phone-pad"
+              textContentType="telephoneNumber"
+              onChangeText={setPhoneNumber}
+            />
+            <Button
+              title="Envoyer le sms le vérification"
+              disabled={!phoneNumber}
+              onPress={async () => {
+                try {
+                  const phoneProvider = new PhoneAuthProvider(auth);
+                  const tempVerificationid = await phoneProvider.verifyPhoneNumber(
+                    phoneNumber,
+                    recaptchaVerifier.current,
+                  );
+                  setVerificationId(tempVerificationid);
+                  showMessage({
+                    text: 'Un sms de vérification à été envoyé sur votre téléphone.',
+                  });
+                } catch (err) {
+                  showMessage({ text: `Error: ${err.message}`, color: 'red' });
+                }
+              }}
+            />
+          </>
+        ) : undefined}
         {verificationId ? (
           <>
             <Text style={{ marginTop: 20 }}>Entrez code reçu par sms</Text>
@@ -118,7 +122,7 @@ function PhoneSignIn({ navigation }) {
   }
   return (
     <View style={styles.container}>
-      <Button title="Déconnexion" onPress={() => auth.signOut()} />
+      <Button title="Déconnexion" onPress={() => { setPhoneNumber(null); setVerificationId(null); auth.signOut(); }} />
     </View>
   );
 }
