@@ -20,12 +20,8 @@ function PhoneSignIn({ navigation }) {
   const [message, showMessage] = React.useState();
   const attemptInvisibleVerification = false;
 
-    
-
   return (
     <View style={styles.container}>
-         {!verificationId ? (
-            <>
       <FirebaseRecaptchaVerifierModal
         ref={recaptchaVerifier}
         firebaseConfig={firebaseConfig}
@@ -45,7 +41,6 @@ function PhoneSignIn({ navigation }) {
         title="Envoyer le sms le vérification"
         disabled={!phoneNumber}
         onPress={async () => {
-          
           try {
             const phoneProvider = new PhoneAuthProvider(auth);
             const verificationId = await phoneProvider.verifyPhoneNumber(
@@ -61,8 +56,6 @@ function PhoneSignIn({ navigation }) {
           }
         }}
       />
-      </>
-        ) : undefined}
       {verificationId ? (
         <>
       <Text style={{ marginTop: 20 }}>Entrer code reçu par sms</Text>
