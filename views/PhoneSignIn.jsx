@@ -2,7 +2,6 @@ import * as React from 'react';
 import {
   Text, View, TextInput, Button, StyleSheet, TouchableOpacity,
 } from 'react-native';
-import PropTypes from 'prop-types';
 import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-firebase-recaptcha';
 import { PhoneAuthProvider, signInWithCredential } from 'firebase/auth';
 import { app, auth } from '../services/firebaseConfig';
@@ -16,7 +15,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function PhoneSignIn({ navigation }) {
+function PhoneSignIn() {
   const recaptchaVerifier = React.useRef(null);
   const [phoneNumber, setPhoneNumber] = React.useState();
   const [verificationId, setVerificationId] = React.useState();
@@ -96,7 +95,6 @@ function PhoneSignIn({ navigation }) {
                   const credential = PhoneAuthProvider.credential(verificationId, verificationCode);
                   await signInWithCredential(auth, credential);
                   showMessage({ text: 'Vous etes connecté via votre téléphone 👍' });
-                  navigation.navigate('Home');
                 } catch (err) {
                   showMessage({ text: `Error: ${err.message}`, color: 'red' });
                 }
@@ -134,9 +132,5 @@ function PhoneSignIn({ navigation }) {
     </View>
   );
 }
-
-PhoneSignIn.propTypes = {
-  navigation: PropTypes.instanceOf(Object).isRequired,
-};
 
 export default PhoneSignIn;
