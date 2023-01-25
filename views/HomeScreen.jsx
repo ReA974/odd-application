@@ -27,7 +27,8 @@ function HomeScreen({ navigation }) {
       <Text>Session en cours</Text>
       <Button
         mode="contained"
-        onPress={() => { setSessionStarted(false); navigation.navigate('Home'); }}
+        // eslint-disable-next-line no-alert
+        onPress={() => { setSessionStarted(false); navigation.navigate('PhoneSignIn'); }}
       >
         Stop session
       </Button>
@@ -36,7 +37,7 @@ function HomeScreen({ navigation }) {
 }
 
 HomeScreen.propTypes = {
-  navigation: PropTypes.instanceOf(Object),
+  navigation: PropTypes.instanceOf(Object).isRequired,
 };
 
 export default HomeScreen;

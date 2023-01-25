@@ -20,7 +20,7 @@ function Map() {
     })();
   }, []);
 
-  if (location) {
+  if (location !== null) {
     return (
       <View style={styles.container}>
         <MapView
@@ -54,31 +54,7 @@ function Map() {
 
   return (
     <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        initialRegion={{
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.04,
-        }}
-        
-        showsMyLocationButton = {true}
-        showsUserLocation = {true}
-        showsCompass = {true}
-        showsScale = {true}
-      >
-
-        <Marker
-          coordinate={{
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-          }}	
-          title="VOTRE POSITION INITALE"
-          description="Description de votre position initiale"
-        />
-        
-      </MapView>
+      <Text>Chargement de la carte...</Text>
     </View>
   );
 }

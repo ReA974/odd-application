@@ -1,9 +1,9 @@
 // create session storage hook for react native
 
 import { useState } from 'react';
-import { AsyncStorage } from 'react-native';
+import { AsyncStorage } from 'react-native-async-storage';
 
-export const useSessionStorage = (key, initialValue) => {
+function useSessionStorage(key, initialValue) {
   const [storedValue, setStoredValue] = useState(() => {
     try {
       const item = AsyncStorage.getItem(key);
@@ -14,7 +14,7 @@ export const useSessionStorage = (key, initialValue) => {
     }
   });
 
-  const setValue = (value) => {
+  function setValue(value) {
     try {
       const valueToStore = value instanceof Function ? value(storedValue) : value;
       setStoredValue(valueToStore);
@@ -22,7 +22,9 @@ export const useSessionStorage = (key, initialValue) => {
     } catch (error) {
       console.log(error);
     }
-  };
+  }
 
   return [storedValue, setValue];
-};
+}
+
+export default useSessionStorage;
