@@ -5,7 +5,7 @@ import * as React from 'react';
 import {
   View, Text, Image, StyleSheet,
 } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE, Callout } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { useEffect, useState } from 'react';
 import { getAllPOI } from '../services/firebaseQueries';
@@ -25,10 +25,25 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
   },
+  popover: {
+    flexDirection: 'column',
+    alignSelf: 'flex-start',
+    backgroundColor: '#fff',
+    borderRadius: 6,
+    borderColor: '#ccc',
+    borderWidth: 0.5,
+    padding: 15,
+    width: 150,
+  },
+  imageOnPopover: {
+    width: 120,
+    height: 80,
+  },
 });
 
 function Map() {
   const [location, setLocation] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [poiList, setPOIList] = useState(null);
   const pauvrete = require('../assets/1.png');
   const faim = require('../assets/2.png');
@@ -51,6 +66,7 @@ function Map() {
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
+      setLoading(true);
       if (status !== 'granted') {
         // setErrorMsg('Permission to access location was denied');
         return;
@@ -59,6 +75,7 @@ function Map() {
       setLocation(tempLoc);
       const tempPOI = await getAllPOI();
       setPOIList(tempPOI);
+      setLoading(false);
     })();
   }, []);
 
@@ -76,6 +93,7 @@ function Map() {
     ];
 
     return (
+      !loading && (
       <View style={styles.container}>
         <MapView
           style={styles.map}
@@ -96,7 +114,7 @@ function Map() {
             poiList && (
               poiList.map((elem) => (
                 <Marker
-                  key={elem.name}
+                  key={elem.id}
                   coordinate={{
                     latitude: elem.coordinates.latitude,
                     longitude: elem.coordinates.longitude,
@@ -104,6 +122,24 @@ function Map() {
                   title={elem.name}
                   description={elem.description}
                 >
+                  <Callout tooltip>
+                    <View style={styles.popover}>
+                      {elem.imageURL && (
+                        <Image
+                          style={styles.imageOnPopover}
+                          source={{
+                            uri: elem.imageURL,
+                          }}
+                        />
+                      )}
+                      <Text>
+                        {elem.name}
+                      </Text>
+                      <Text>
+                        {elem.description}
+                      </Text>
+                    </View>
+                  </Callout>
                   <Image
                     source={elem.linkedODD[0] === 1 ? pauvrete
                       : elem.linkedODD[0] === 2 ? faim
@@ -131,14 +167,9 @@ function Map() {
           }
         </MapView>
       </View>
+      )
     );
   }
-
-  return (
-    <View style={styles.container}>
-      <Text>Chargement de la carte...</Text>
-    </View>
-  );
 }
 
 export default Map;
