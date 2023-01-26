@@ -12,6 +12,7 @@ async function useCloseMarker(coords) {
       markerClose.push(marker);
     }
   }
+  if (markerClose.length === 0) return null;
   return markerClose;
 }
 
