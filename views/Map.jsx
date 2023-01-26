@@ -8,6 +8,7 @@ import {
 import MapView, { Marker, PROVIDER_GOOGLE, Callout } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { useEffect, useState } from 'react';
+import WebView from 'react-native-webview';
 import { getAllPOI } from '../services/firebaseQueries';
 import useCloseMarker from '../services/useCloseMarker';
 
@@ -38,7 +39,7 @@ const styles = StyleSheet.create({
   },
   imageOnPopover: {
     width: 120,
-    height: 80,
+    height: 90,
   },
 });
 
@@ -105,79 +106,77 @@ function Map() {
 
     return (
       !loading && (
-        <View style={styles.container}>
-          <MapView
-            style={styles.map}
-            customMapStyle={mapStyle}
-            provider={PROVIDER_GOOGLE}
-            initialRegion={{
-              latitude: location.coords.latitude,
-              longitude: location.coords.longitude,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
-            }}
-            showsMyLocationButton
-            showsUserLocation
-            showsCompass
-            showsScale
-          >
-            {
-              poiList && (
-                poiList.map((elem) => (
-                  <Marker
-                    key={elem.id}
-                    coordinate={{
-                      latitude: elem.coordinates.latitude,
-                      longitude: elem.coordinates.longitude,
-                    }}
-                    title={elem.name}
-                    description={elem.description}
-                  >
-                    <Callout tooltip>
-                      <View style={styles.popover}>
-                        {elem.imageURL && (
-                          <Image
-                            style={styles.imageOnPopover}
-                            source={{
-                              uri: elem.imageURL,
-                            }}
-                          />
-                        )}
-                        <Text>
-                          {elem.name}
-                        </Text>
-                        <Text>
-                          {elem.description}
-                        </Text>
-                      </View>
-                    </Callout>
-                    <Image
-                      source={elem.linkedODD[0] === 1 ? pauvrete
-                        : elem.linkedODD[0] === 2 ? faim
-                          : elem.linkedODD[0] === 3 ? sante
-                            : elem.linkedODD[0] === 4 ? education
-                              : elem.linkedODD[0] === 5 ? egalite
-                                : elem.linkedODD[0] === 6 ? eau
-                                  : elem.linkedODD[0] === 7 ? energie
-                                    : elem.linkedODD[0] === 8 ? travail
-                                      : elem.linkedODD[0] === 8 ? industrie
-                                        : elem.linkedODD[0] === 9 ? industrie
-                                          : elem.linkedODD[0] === 10 ? inegalite
-                                            : elem.linkedODD[0] === 11 ? durable
-                                              : elem.linkedODD[0] === 12 ? responsable
-                                                : elem.linkedODD[0] === 13 ? climatique
-                                                  : elem.linkedODD[0] === 14 ? ocean
-                                                    : elem.linkedODD[0] === 15 ? terrestre
-                                                      : elem.linkedODD[0] === 16 ? paix
-                                                        : partenariats}
-                      style={styles.image}
-                    />
-                  </Marker>
-                ))
-              )
-            }
-          </MapView>
-        </View>
+        <MapView
+          style={styles.map}
+          customMapStyle={mapStyle}
+          provider={PROVIDER_GOOGLE}
+          initialRegion={{
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+          showsMyLocationButton
+          showsUserLocation
+          showsCompass
+          showsScale
+        >
+          {
+            poiList && (
+              poiList.map((elem) => (
+                <Marker
+                  key={elem.id}
+                  coordinate={{
+                    latitude: elem.coordinates.latitude,
+                    longitude: elem.coordinates.longitude,
+                  }}
+                  title={elem.name}
+                  description={elem.description}
+                >
+                  <Image
+                    source={elem.linkedODD[0] === 1 ? pauvrete
+                      : elem.linkedODD[0] === 2 ? faim
+                        : elem.linkedODD[0] === 3 ? sante
+                          : elem.linkedODD[0] === 4 ? education
+                            : elem.linkedODD[0] === 5 ? egalite
+                              : elem.linkedODD[0] === 6 ? eau
+                                : elem.linkedODD[0] === 7 ? energie
+                                  : elem.linkedODD[0] === 8 ? travail
+                                    : elem.linkedODD[0] === 8 ? industrie
+                                      : elem.linkedODD[0] === 9 ? industrie
+                                        : elem.linkedODD[0] === 10 ? inegalite
+                                          : elem.linkedODD[0] === 11 ? durable
+                                            : elem.linkedODD[0] === 12 ? responsable
+                                              : elem.linkedODD[0] === 13 ? climatique
+                                                : elem.linkedODD[0] === 14 ? ocean
+                                                  : elem.linkedODD[0] === 15 ? terrestre
+                                                    : elem.linkedODD[0] === 16 ? paix
+                                                      : partenariats}
+                    style={styles.image}
+                  />
+                  <Callout tooltip>
+                    <View style={styles.popover}>
+                      {elem.imageURL && (
+                        <WebView
+                          style={styles.imageOnPopover}
+                          source={{
+                            uri: elem.imageURL,
+                          }}
+                        />
+                      )}
+                      <Text>
+                        {elem.name}
+                      </Text>
+                      <Text>
+                        {elem.description}
+                      </Text>
+                    </View>
+                  </Callout>
+                </Marker>
+              ))
+            )
+          }
+        </MapView>
       )
     );
   }
