@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
 
 function Map() {
   const [location, setLocation] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [poiList, setPOIList] = useState(null);
   const pauvrete = require('../assets/1.png');
   const faim = require('../assets/2.png');
@@ -65,6 +66,7 @@ function Map() {
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
+      setLoading(true);
       if (status !== 'granted') {
         // setErrorMsg('Permission to access location was denied');
         return;
@@ -73,6 +75,7 @@ function Map() {
       setLocation(tempLoc);
       const tempPOI = await getAllPOI();
       setPOIList(tempPOI);
+      setLoading(false);
     })();
   }, []);
 
@@ -90,6 +93,7 @@ function Map() {
     ];
 
     return (
+      !loading && (
       <View style={styles.container}>
         <MapView
           style={styles.map}
@@ -110,7 +114,7 @@ function Map() {
             poiList && (
               poiList.map((elem) => (
                 <Marker
-                  key={elem.name}
+                  key={elem.id}
                   coordinate={{
                     latitude: elem.coordinates.latitude,
                     longitude: elem.coordinates.longitude,
@@ -120,7 +124,14 @@ function Map() {
                 >
                   <Callout tooltip>
                     <View style={styles.popover}>
-                      <Image style={styles.imageOnPopover} source={require('../assets/test.webp')} />
+                      {elem.imageURL && (
+                        <Image
+                          style={styles.imageOnPopover}
+                          source={{
+                            uri: elem.imageURL,
+                          }}
+                        />
+                      )}
                       <Text>
                         {elem.name}
                       </Text>
@@ -156,14 +167,9 @@ function Map() {
           }
         </MapView>
       </View>
+      )
     );
   }
-
-  return (
-    <View style={styles.container}>
-      <Text>Chargement de la carte...</Text>
-    </View>
-  );
 }
 
 export default Map;
