@@ -77,14 +77,17 @@ function Map() {
       const tempPOI = await getAllPOI();
       setPOIList(tempPOI);
       setLoading(false);
-      if (location !== null) {
-        const markerCloseTome = useCloseMarker(location.coords);
-        if (markerCloseTome.length > 0) {
-          // eslint-disable-next-line no-console
-          console.log(markerCloseTome);
-        }
-      }
     })();
+  }, []);
+
+  useEffect(() => {
+    if (location !== null) {
+      const markerCloseTome = useCloseMarker(location.coords);
+      if (markerCloseTome.length > 0) {
+        // eslint-disable-next-line no-console
+        console.log(markerCloseTome);
+      }
+    }
   }, [location]);
 
   if (location !== null) {
