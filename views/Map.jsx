@@ -9,6 +9,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { useEffect, useState } from 'react';
 import { getAllPOI } from '../services/firebaseQueries';
+import useCloseMarker from '../services/useCloseMarker';
 
 const styles = StyleSheet.create({
   container: {
@@ -74,6 +75,12 @@ function Map() {
         ],
       },
     ];
+
+    // use effect on location change
+    useEffect(() => {
+      const markerCloseTome = useCloseMarker(location.coords);
+      console.log(markerCloseTome);
+    }, [location]);
 
     return (
       <View style={styles.container}>
