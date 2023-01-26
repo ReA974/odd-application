@@ -3,7 +3,7 @@
 /* eslint-disable global-require */
 import * as React from 'react';
 import {
-  View, Text, Image, StyleSheet,
+  Platform, View, Text, Image, StyleSheet,
 } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE, Callout } from 'react-native-maps';
 import * as Location from 'expo-location';
@@ -64,6 +64,7 @@ function Map() {
   const terrestre = require('../assets/15.png');
   const paix = require('../assets/16.png');
   const partenariats = require('../assets/17.png');
+  const isAndroid = Platform.OS === 'android';
 
   useEffect(() => {
     (async () => {
@@ -156,12 +157,16 @@ function Map() {
                   />
                   <Callout tooltip>
                     <View style={styles.popover}>
-                      {elem.imageURL && (
-                        <WebView
+                      {!isAndroid && elem.image !== null && (
+                        <Image
+                          source={{ uri: elem.image }}
                           style={styles.imageOnPopover}
-                          source={{
-                            uri: elem.imageURL,
-                          }}
+                        />
+                      )}
+                      {isAndroid && elem.image !== null && (
+                        <WebView
+                          source={{ uri: elem.image }}
+                          style={styles.imageOnPopover}
                         />
                       )}
                       <Text>
