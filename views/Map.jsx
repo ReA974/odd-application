@@ -79,6 +79,7 @@ function Map() {
     // use effect on location change
     useEffect(() => {
       const markerCloseTome = useCloseMarker(location.coords);
+      // eslint-disable-next-line no-console
       console.log(markerCloseTome);
     }, [location]);
 
