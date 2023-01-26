@@ -104,7 +104,6 @@ function Map() {
         ],
       },
     ];
-
     return (
       !loading && (
         <MapView
@@ -157,15 +156,15 @@ function Map() {
                   />
                   <Callout tooltip>
                     <View style={styles.popover}>
-                      {!isAndroid && elem.image !== null && (
+                      {!isAndroid && elem.imageURL !== undefined && (
                         <Image
-                          source={{ uri: elem.image }}
+                          source={{ uri: elem.imageURL }}
                           style={styles.imageOnPopover}
                         />
                       )}
-                      {isAndroid && elem.image !== null && (
+                      {isAndroid && elem.imageURL !== undefined && (
                         <WebView
-                          source={{ uri: elem.image }}
+                          source={{ uri: elem.imageURL }}
                           style={styles.imageOnPopover}
                         />
                       )}
