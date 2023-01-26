@@ -5,7 +5,7 @@ import * as React from 'react';
 import {
   View, Text, Image, StyleSheet,
 } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE, Callout } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { useEffect, useState } from 'react';
 import { getAllPOI } from '../services/firebaseQueries';
@@ -24,6 +24,20 @@ const styles = StyleSheet.create({
   image: {
     width: 38,
     height: 38,
+  },
+  popover: {
+    flexDirection: 'column',
+    alignSelf: 'flex-start',
+    backgroundColor: '#fff',
+    borderRadius: 6,
+    borderColor: '#ccc',
+    borderWidth: 0.5,
+    padding: 15,
+    width: 150,
+  },
+  imageOnPopover: {
+    width: 120,
+    height: 80,
   },
 });
 
@@ -104,6 +118,17 @@ function Map() {
                   title={elem.name}
                   description={elem.description}
                 >
+                  <Callout tooltip>
+                    <View style={styles.popover}>
+                      <Image style={styles.imageOnPopover} source={require('../assets/test.webp')} />
+                      <Text>
+                        {elem.name}
+                      </Text>
+                      <Text>
+                        {elem.description}
+                      </Text>
+                    </View>
+                  </Callout>
                   <Image
                     source={elem.linkedODD[0] === 1 ? pauvrete
                       : elem.linkedODD[0] === 2 ? faim
