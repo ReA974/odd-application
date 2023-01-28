@@ -1,7 +1,9 @@
+/* eslint-disable global-require */
 /* eslint-disable no-nested-ternary */
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import CircularProgress from 'react-native-circular-progress-indicator';
+import LottieView from 'lottie-react-native';
 import {
   ProgressBar, Text, Card,
 } from 'react-native-paper';
@@ -71,6 +73,7 @@ const styles = StyleSheet.create({
 
 function TropheeScreen() {
   const [oddDiscovered, setODDDiscovered] = useState(new Set());
+  const animationRef = useRef();
   const [nbrGoodAnswers, setNbrGoodAnswers] = useState(2);
   const [nbrQuestions, setNbrQuestions] = useState(5);
   const [visitedPOI, setVisitedPOI] = useState(0);
@@ -81,10 +84,12 @@ function TropheeScreen() {
   const user = auth.currentUser;
 
   function toHoursAndMinutes(totalMinutes) {
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = Math.round((totalMinutes % 60));
-
-    return `${hours}h${minutes > 0 ? ` ${minutes}min` : ''}`;
+    if (!Number.isNaN(tempsLastSession)) {
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = Math.round((totalMinutes % 60));
+      return `${hours}h${minutes > 0 ? ` ${minutes}min` : ''}`;
+    }
+    return undefined;
   }
 
   useEffect(() => {
@@ -102,6 +107,11 @@ function TropheeScreen() {
       });
       setTotalPOI(tempPOI.length);
       setLoading(false);
+      setTimeout(() => {
+        if (animationRef.current) {
+          animationRef.current.play();
+        }
+      }, 1);
     })();
   }, []);
   return (
@@ -168,7 +178,7 @@ function TropheeScreen() {
             <Card.Content style={{ paddingTop: 10 }}>
               <Text variant="titleLarge" style={{ fontWeight: '500' }}>Temps dernier parcours</Text>
               <Text
-                variant="displayMedium"
+                variant={Number.isNaN(tempsLastSession) ? 'titleLarge' : 'displayMedium'}
                 style={{ color: '#00CED1', marginTop: 5, marginBottom: 5 }}
               >
                 {toHoursAndMinutes(tempsLastSession) || 'Aucune session réalisée'}
@@ -177,12 +187,27 @@ function TropheeScreen() {
               <Text variant="bodyLarge">
                 {visitedPOI.length}
                 {' '}
-                points d&apos;intérets visités
+                point
+                {visitedPOI.length > 1 && 's'}
+                {' '}
+                d&apos;intéret
+                {visitedPOI.length > 1 && 's'}
+                {' '}
+                visité
+                {visitedPOI.length > 1 && 's'}
               </Text>
               <ProgressBar progress={visitedPOI.length / totalPOI} color="#00CED1" style={{ width: 250, marginTop: 5 }} />
             </Card.Content>
           </Card>
         </View>
+        <LottieView
+          source={require('../assets/trophy.json')}
+          style={{ height: 200 }}
+          loop={false}
+          ref={(animation) => {
+            animationRef.current = animation;
+          }}
+        />
       </View>
     )
       : (
