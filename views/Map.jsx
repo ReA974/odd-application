@@ -3,7 +3,7 @@
 /* eslint-disable global-require */
 import * as React from 'react';
 import {
-  Platform, View, Text, Image, StyleSheet,
+  Platform, View, Text, Image, StyleSheet, ActivityIndicator,
 } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE, Callout } from 'react-native-maps';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -117,7 +117,7 @@ function Map() {
       },
     ];
     return (
-      !loading && (
+      !loading ? (
         <MapView
           style={styles.map}
           customMapStyle={mapStyle}
@@ -189,6 +189,11 @@ function Map() {
             )
           }
         </MapView>
+      ) : (
+        <View style={styles.container}>
+          <Text style={{ marginBottom: 10 }}>Chargement des données... </Text>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
       )
     );
   }
