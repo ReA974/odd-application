@@ -2,7 +2,9 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable import/prefer-default-export */
-import { collection, getDocs } from 'firebase/firestore';
+import {
+  collection, getDocs,
+} from 'firebase/firestore';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { db, storage } from './firebaseConfig';
 
@@ -26,6 +28,23 @@ export async function getImageByPOI(id) {
     }
   });
   return URI;
+}
+
+export function getPhoneNumber(user) {
+  if (user) {
+    return `0${user.phoneNumber.slice(3)}`;
+  }
+  return null;
+}
+
+export async function getVisitedPOI(user) {
+  const POIVisitedArray = [];
+  const phoneNumber = getPhoneNumber(user);
+  const result = await getDocs(collection(db, 'GROUP', phoneNumber, 'VISIT'));
+  result.forEach((resDoc) => {
+    POIVisitedArray.push(resDoc.id);
+  });
+  return POIVisitedArray;
 }
 
 export async function getAllPOI() {

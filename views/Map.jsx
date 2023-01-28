@@ -6,10 +6,12 @@ import {
   Platform, View, Text, Image, StyleSheet,
 } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE, Callout } from 'react-native-maps';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import * as Location from 'expo-location';
 import { useEffect, useState } from 'react';
 import WebView from 'react-native-webview';
-import { getAllPOI } from '../services/firebaseQueries';
+import { auth } from '../services/firebaseConfig';
+import { getAllPOI, getVisitedPOI } from '../services/firebaseQueries';
 import useCloseMarker from '../services/useCloseMarker';
 
 const styles = StyleSheet.create({
@@ -27,6 +29,11 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
   },
+  imageDisabled: {
+    width: 38,
+    height: 38,
+    opacity: 0.5,
+  },
   popover: {
     flexDirection: 'column',
     alignSelf: 'flex-start',
@@ -40,13 +47,16 @@ const styles = StyleSheet.create({
   imageOnPopover: {
     width: 120,
     height: 90,
+    marginBottom: 5,
   },
 });
 
 function Map() {
+  const [user] = useAuthState(auth);
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(true);
   const [poiList, setPOIList] = useState(null);
+  const [visitedPOI, setVisitedPOI] = useState(null);
   const pauvrete = require('../assets/1.png');
   const faim = require('../assets/2.png');
   const sante = require('../assets/3.png');
@@ -78,6 +88,8 @@ function Map() {
       setLocation(tempLoc);
       const tempPOI = await getAllPOI();
       setPOIList(tempPOI);
+      const tempVisited = await getVisitedPOI(user);
+      setVisitedPOI(tempVisited);
       setLoading(false);
     })();
   }, []);
@@ -131,7 +143,6 @@ function Map() {
                     longitude: elem.coordinates.longitude,
                   }}
                   title={elem.name}
-                  description={elem.description}
                 >
                   <Image
                     source={elem.linkedODD[0] === 1 ? pauvrete
@@ -152,7 +163,7 @@ function Map() {
                                                   : elem.linkedODD[0] === 15 ? terrestre
                                                     : elem.linkedODD[0] === 16 ? paix
                                                       : partenariats}
-                    style={styles.image}
+                    style={visitedPOI.includes(elem.id) ? styles.imageDisabled : styles.image}
                   />
                   <Callout tooltip>
                     <View style={styles.popover}>
@@ -168,11 +179,8 @@ function Map() {
                           style={styles.imageOnPopover}
                         />
                       )}
-                      <Text>
+                      <Text style={{ textAlign: 'center' }}>
                         {elem.name}
-                      </Text>
-                      <Text>
-                        {elem.description}
                       </Text>
                     </View>
                   </Callout>

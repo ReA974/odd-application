@@ -16,7 +16,6 @@ const Tab = createBottomTabNavigator();
 
 export default function App() {
   const [user] = useAuthState(auth);
-
   if (user) {
     return (
       <PaperProvider>
