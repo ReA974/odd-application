@@ -70,7 +70,7 @@ function HomeScreen({ navigation }) {
               </Card.Content>
             </Card>
           </TouchableOpacity>
-          <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Home')}>
+          <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Trophees')}>
             <Card key={2} style={styles.card}>
               <Card.Content style={{ paddingTop: 10 }}>
                 <Text variant="titleLarge" style={{ fontWeight: '500' }}>Mes trophées</Text>
@@ -83,7 +83,7 @@ function HomeScreen({ navigation }) {
           </TouchableOpacity>
         </View>
         <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('ODD')}>
-          <Card key={2} style={styles.card}>
+          <Card key={3} style={styles.card}>
             <Card.Content style={{ paddingTop: 10 }}>
               <Text variant="titleLarge" style={{ fontWeight: '500' }}>Decouvrir les ODD</Text>
             </Card.Content>
@@ -100,7 +100,6 @@ function HomeScreen({ navigation }) {
          onPress={() => { timerSession.getDeltaTime(user); }}> Get Time Delta</Button>
          */}
       </View>
-
     </View>
   );
 }

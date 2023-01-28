@@ -33,9 +33,11 @@ async function getDeltaTime(user) {
       Delta = delta / 60;
     }
   });
-  await setDoc(doc(db, 'GROUP', phoneNumber), {
+  /* await setDoc(doc(db, 'GROUP', phoneNumber), {
     deltaSession: Delta,
   }, { merge: true });
+  */
+  return Delta;
 }
 
 export { startTimer, stopTimer, getDeltaTime };
