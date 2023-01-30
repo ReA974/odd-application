@@ -3,7 +3,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable import/prefer-default-export */
 import {
-  collection, getDocs,
+  collection, getDocs, doc, getDoc,
 } from 'firebase/firestore';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { db, storage } from './firebaseConfig';
@@ -47,19 +47,33 @@ export async function getVisitedPOI(user) {
   return POIVisitedArray;
 }
 
+export async function getStartDate(user) {
+  let startSession;
+  let endSession;
+  const phoneNumber = getPhoneNumber(user);
+  const tempDoc = await getDoc(doc(db, 'GROUP', phoneNumber));
+  if (tempDoc) {
+    startSession = tempDoc.data().startSession;
+    if (tempDoc.data().endSession) {
+      endSession = tempDoc.data().endSession;
+    }
+  }
+  return [startSession.seconds, endSession];
+}
+
 export async function getAllPOI() {
   const POIArray = [];
   const tempCollection = [];
   const querySnapshot = await getDocs(collection(db, 'POI'));
 
-  querySnapshot.forEach((doc) => {
-    const object = doc.data();
-    object.id = doc.id;
+  querySnapshot.forEach((tempDoc) => {
+    const object = tempDoc.data();
+    object.id = tempDoc.id;
     tempCollection.push(object);
   });
 
-  for (const doc of tempCollection) {
-    const object = doc;
+  for (const doc1 of tempCollection) {
+    const object = doc1;
     const url = await getImageByPOI(object.id);
     object.imageURL = url;
     POIArray.push(object);

@@ -3,10 +3,14 @@
 /* eslint-disable global-require */
 import * as React from 'react';
 import {
-  Platform, View, Text, Image, StyleSheet, ActivityIndicator,
+  Platform, View, Image, StyleSheet, ActivityIndicator, TouchableOpacity,
 } from 'react-native';
+import {
+  Button, Dialog, Portal, Text,
+} from 'react-native-paper';
 import MapView, { Marker, PROVIDER_GOOGLE, Callout } from 'react-native-maps';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import PropTypes from 'prop-types';
 import * as Location from 'expo-location';
 import { useEffect, useState } from 'react';
 import WebView from 'react-native-webview';
@@ -49,31 +53,30 @@ const styles = StyleSheet.create({
     height: 90,
     marginBottom: 5,
   },
+  overlay: {
+    position: 'absolute',
+    backgroundColor: 'rgba(255, 255, 255, 1)',
+    borderRadius: 10,
+    width: 100,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 70,
+    marginLeft: 10,
+  },
 });
 
-function Map() {
+function Map({
+  navigation, startDate, endDate, hours, minutes, seconds, clearTimer,
+}) {
   const [user] = useAuthState(auth);
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(true);
   const [poiList, setPOIList] = useState(null);
   const [visitedPOI, setVisitedPOI] = useState(null);
-  const pauvrete = require('../assets/1.png');
-  const faim = require('../assets/2.png');
-  const sante = require('../assets/3.png');
-  const education = require('../assets/4.png');
-  const egalite = require('../assets/5.png');
-  const eau = require('../assets/6.png');
-  const energie = require('../assets/7.png');
-  const travail = require('../assets/8.png');
-  const industrie = require('../assets/9.png');
-  const inegalite = require('../assets/10.png');
-  const durable = require('../assets/11.png');
-  const responsable = require('../assets/12.png');
-  const climatique = require('../assets/13.png');
-  const ocean = require('../assets/14.png');
-  const terrestre = require('../assets/15.png');
-  const paix = require('../assets/16.png');
-  const partenariats = require('../assets/17.png');
+  const [visible, setVisible] = useState(false);
+  const showDialog = () => setVisible(true);
+  const hideDialog = () => setVisible(false);
   const isAndroid = Platform.OS === 'android';
 
   useEffect(() => {
@@ -90,6 +93,7 @@ function Map() {
       setPOIList(tempPOI);
       const tempVisited = await getVisitedPOI(user);
       setVisitedPOI(tempVisited);
+      // clearTimer();
       setLoading(false);
     })();
   }, []);
@@ -118,22 +122,23 @@ function Map() {
     ];
     return (
       !loading ? (
-        <MapView
-          style={styles.map}
-          customMapStyle={mapStyle}
-          provider={PROVIDER_GOOGLE}
-          initialRegion={{
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
-          showsMyLocationButton
-          showsUserLocation
-          showsCompass
-          showsScale
-        >
-          {
+        <View>
+          <MapView
+            style={styles.map}
+            customMapStyle={mapStyle}
+            provider={PROVIDER_GOOGLE}
+            initialRegion={{
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+            showsMyLocationButton
+            showsUserLocation
+            showsCompass
+            showsScale
+          >
+            {
             poiList && (
               poiList.map((elem) => (
                 <Marker
@@ -143,28 +148,8 @@ function Map() {
                     longitude: elem.coordinates.longitude,
                   }}
                   title={elem.name}
+                  style={visitedPOI.includes(elem.id) ? styles.imageDisabled : styles.image}
                 >
-                  <Image
-                    source={elem.linkedODD[0] === 1 ? pauvrete
-                      : elem.linkedODD[0] === 2 ? faim
-                        : elem.linkedODD[0] === 3 ? sante
-                          : elem.linkedODD[0] === 4 ? education
-                            : elem.linkedODD[0] === 5 ? egalite
-                              : elem.linkedODD[0] === 6 ? eau
-                                : elem.linkedODD[0] === 7 ? energie
-                                  : elem.linkedODD[0] === 8 ? travail
-                                    : elem.linkedODD[0] === 8 ? industrie
-                                      : elem.linkedODD[0] === 9 ? industrie
-                                        : elem.linkedODD[0] === 10 ? inegalite
-                                          : elem.linkedODD[0] === 11 ? durable
-                                            : elem.linkedODD[0] === 12 ? responsable
-                                              : elem.linkedODD[0] === 13 ? climatique
-                                                : elem.linkedODD[0] === 14 ? ocean
-                                                  : elem.linkedODD[0] === 15 ? terrestre
-                                                    : elem.linkedODD[0] === 16 ? paix
-                                                      : partenariats}
-                    style={visitedPOI.includes(elem.id) ? styles.imageDisabled : styles.image}
-                  />
                   <Callout tooltip>
                     <View style={styles.popover}>
                       {!isAndroid && elem.imageURL !== undefined && (
@@ -188,7 +173,26 @@ function Map() {
               ))
             )
           }
-        </MapView>
+          </MapView>
+          {endDate === undefined && startDate !== undefined && (
+            <TouchableOpacity style={styles.overlay} onPress={() => showDialog()}>
+              <Text style={styles.text}>{`${hours !== 0 ? `${hours}h ` : ''}${minutes !== 0 ? `${minutes}min` : ''} ${seconds !== 0 ? `${seconds}s` : ''}`}</Text>
+            </TouchableOpacity>
+          )}
+          <Portal>
+            <Dialog visible={visible} onDismiss={hideDialog}>
+              <Dialog.Title>ODDyssée - Confirmation</Dialog.Title>
+              <Dialog.Content>
+                <Text variant="bodyMedium">Souhaitez-vous arrêter la session ?</Text>
+              </Dialog.Content>
+              <Dialog.Actions>
+                <Button onPress={() => { hideDialog(); clearTimer(); navigation.navigate('Trophees'); }}>Oui</Button>
+                <Button onPress={hideDialog}>Non</Button>
+              </Dialog.Actions>
+            </Dialog>
+          </Portal>
+        </View>
+
       ) : (
         <View style={styles.container}>
           <Text style={{ marginBottom: 10 }}>Chargement des données... </Text>
@@ -198,5 +202,18 @@ function Map() {
     );
   }
 }
+Map.propTypes = {
+  navigation: PropTypes.instanceOf(Object).isRequired,
+  startDate: PropTypes.number,
+  endDate: PropTypes.number,
+  hours: PropTypes.number.isRequired,
+  minutes: PropTypes.number.isRequired,
+  seconds: PropTypes.number.isRequired,
+  clearTimer: PropTypes.func.isRequired,
+};
+Map.defaultProps = {
+  startDate: undefined,
+  endDate: undefined,
+};
 
 export default Map;

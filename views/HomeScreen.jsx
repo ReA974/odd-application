@@ -3,7 +3,7 @@ import * as React from 'react';
 import {
   StyleSheet, View, Image, TouchableOpacity,
 } from 'react-native';
-import { Text, Card, Button } from 'react-native-paper';
+import { Text, Card } from 'react-native-paper';
 import PropTypes from 'prop-types';
 import logoAssociation from '../assets/logoAssociation.png';
 import learning from '../assets/learning.png';
@@ -24,10 +24,12 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   card: {
+    display: 'flex',
     margin: 10,
+    paddingTop: 15,
     padding: 10,
     width: 150,
-    height: 250,
+    height: 256,
     borderRadius: 40,
     backgroundColor: '#fcfcfc',
   },
@@ -40,9 +42,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#4CB1FF',
   },
   image: {
-    marginTop: 20,
     width: '100%',
-    height: '62%',
+    height: 150,
     backgroundColor: '#fcfcfc',
   },
   content: {
@@ -54,7 +55,9 @@ const styles = StyleSheet.create({
   },
 });
 
-function HomeScreen({ navigation }) {
+function HomeScreen({
+  navigation, startTimer, clearTimer, startDate, endDate,
+}) {
   const user = auth.currentUser;
   return (
     <View style={styles.container}>
@@ -62,14 +65,30 @@ function HomeScreen({ navigation }) {
       <Text variant="displayMedium" style={{ marginBottom: '10%', color: '#1a489c' }}>ODDyssée</Text>
       <View style={styles.content}>
         <View style={styles.column}>
-          <TouchableOpacity activeOpacity={0.5} onPress={() => { timerSession.startTimer(user); navigation.navigate('Map'); }}>
-            <Card key={1} style={styles.cardMini}>
-              <Card.Content style={{ paddingTop: 10 }}>
-                <Text variant="bodyLarge" style={{ fontWeight: '600', color: 'white' }}>Démarrer une session</Text>
-                <Text variant="bodyMedium" style={{ color: 'white' }}>Parcours Niort</Text>
-              </Card.Content>
-            </Card>
-          </TouchableOpacity>
+          {startDate !== undefined && endDate !== undefined
+            ? (
+              <TouchableOpacity activeOpacity={0.5} onPress={() => { startTimer(); timerSession.startTimer(user); navigation.navigate('Map', { refresh: true }); }}>
+                <Card key={1} style={styles.cardMini}>
+                  <Card.Content style={{ paddingTop: 10 }}>
+                    <Text variant="bodyLarge" style={{ fontWeight: '600', color: 'white' }}>Démarrer une session</Text>
+                    <Text variant="bodyMedium" style={{ color: 'white' }}>Parcours Niort</Text>
+                  </Card.Content>
+                </Card>
+              </TouchableOpacity>
+            )
+            : (
+              <TouchableOpacity
+                activeOpacity={0.5}
+                onPress={() => { clearTimer(); timerSession.stopTimer(user); navigation.navigate('Trophees'); }}
+              >
+                <Card key={1} style={styles.cardMini}>
+                  <Card.Content style={{ paddingTop: 10 }}>
+                    <Text variant="bodyLarge" style={{ fontWeight: '600', color: 'white' }}>Arrêter une session</Text>
+                    <Text variant="bodyMedium" style={{ color: 'white' }}>Parcours Niort</Text>
+                  </Card.Content>
+                </Card>
+              </TouchableOpacity>
+            )}
           <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Trophees')}>
             <Card key={2} style={styles.card}>
               <Card.Content style={{ paddingTop: 10 }}>
@@ -84,21 +103,18 @@ function HomeScreen({ navigation }) {
         </View>
         <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('ODD')}>
           <Card key={3} style={styles.card}>
-            <Card.Content style={{ paddingTop: 10 }}>
-              <Text variant="titleLarge" style={{ fontWeight: '500' }}>Decouvrir les ODD</Text>
+            <Card.Content style={{ paddingTop: 0 }}>
+              <Text variant="titleLarge" style={{ fontWeight: '500', flexWrap: 'nowrap' }}>Decouvrir les ODD</Text>
             </Card.Content>
-            <Card.Cover
-              source={learning}
-              style={styles.image}
-            />
+            <View style={{ justifyContent: 'flex-end' }}>
+              <Card.Cover
+                source={learning}
+                style={styles.image}
+              />
+            </View>
           </Card>
         </TouchableOpacity>
-        {/*  <Button mode="contained" onPress={() => { auth.signOut(); }}> Déconnexion</Button>
-        <Button mode="contained" onPress={() => { timerSession.stopTimer(user); }}> Stop</Button>
-        <Button
-        mode="contained"
-         onPress={() => { timerSession.getDeltaTime(user); }}> Get Time Delta</Button>
-         */}
+        {/*  <Button mode="contained" onPress={() => { auth.signOut(); }}> Déconnexion</Button> */}
       </View>
     </View>
   );
@@ -106,6 +122,14 @@ function HomeScreen({ navigation }) {
 
 HomeScreen.propTypes = {
   navigation: PropTypes.instanceOf(Object).isRequired,
+  startTimer: PropTypes.func.isRequired,
+  clearTimer: PropTypes.func.isRequired,
+  startDate: PropTypes.number,
+  endDate: PropTypes.number,
+};
+HomeScreen.defaultProps = {
+  startDate: undefined,
+  endDate: undefined,
 };
 
 export default HomeScreen;
