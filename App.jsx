@@ -8,11 +8,13 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { auth } from './services/firebaseConfig';
+import Map from './views/Map';
 import HomeScreen from './views/HomeScreen';
 import ODDScreen from './views/ODDScreen';
-import Map from './views/Map';
 import PhoneSignIn from './views/PhoneSignIn';
 import TropheeScreen from './views/TropheeScreen';
+import ActivityView from './views/ActivityView';
+import ChallengeView from './views/ChallengeView';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -62,6 +64,20 @@ export default function App() {
               component={TropheeScreen}
               options={{
                 title: '', headerShown: true, headerBackButtonMenuEnabled: true, headerBackTitle: 'Accueil', headerTransparent: true,
+              }}
+            />
+            <Stack.Screen
+              name="Activites"
+              component={ActivityView}
+              options={{
+                title: '', headerShown: true, headerBackButtonMenuEnabled: true, headerBackTitle: 'Map', headerTransparent: true,
+              }}
+            />
+            <Stack.Screen
+              name="Challege"
+              component={ChallengeView}
+              options={{
+                title: '', headerShown: true, headerBackButtonMenuEnabled: true, headerBackTitle: 'Map', headerTransparent: true,
               }}
             />
           </Stack.Navigator>

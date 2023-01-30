@@ -3,7 +3,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable import/prefer-default-export */
 import {
-  collection, getDocs,
+  collection, getDocs, getDoc, doc,
 } from 'firebase/firestore';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { db, storage } from './firebaseConfig';
@@ -65,4 +65,14 @@ export async function getAllPOI() {
     POIArray.push(object);
   }
   return POIArray;
+}
+
+export async function getActivity(id) {
+  const activityArray = [];
+  const result = await getDoc(doc(db, 'POI', id));
+  if (result.exists()) {
+    const activity = result.data();
+    activityArray.push(activity);
+  }
+  return activityArray;
 }
