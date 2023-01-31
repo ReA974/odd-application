@@ -91,20 +91,28 @@ export async function getAllPOI() {
 
 export async function getActivity(id) {
   const activityArray = [];
-  const tempCollection = [];
   const result = await getDoc(doc(db, 'POI', id));
   if (result.exists()) {
     const activity = result.data();
     activityArray.push(activity);
   }
-
-  for (const doc1 of activityArray) {
-    const object = doc1;
-    const url = await getImageForChallenge(object.challenge.image);
-    object.challenge.imageURL = url;
-    tempCollection.push(object);
+  if (activityArray[0].challenge.image !== undefined) {
+    const url = await getImageForChallenge(activityArray[0].challenge.image);
+    if (url !== undefined) {
+      activityArray[0].challenge.imageURL = url;
+    }
   }
-  return tempCollection;
+  if (activityArray[0].challenge.goodAnswer !== undefined) {
+    // check if goodAnswer is an image in string
+    if (activityArray[0].challenge.goodAnswer.includes('CHALLENGE')) {
+      const url = await getImageForChallenge(activityArray[0].challenge.goodAnswer);
+      if (url !== undefined) {
+        activityArray[0].challenge.goodAnswerUrl = url;
+      }
+    }
+  }
+
+  return activityArray;
 }
 
 export async function addAnswer(user, goodAnswer) {

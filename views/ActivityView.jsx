@@ -6,8 +6,7 @@ import {
   Button, Dialog,
 } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import GetActivities from '../services/GetActivities';
-import { addAnswer } from '../services/firebaseQueries';
+import { addAnswer, getActivity } from '../services/firebaseQueries';
 import { auth } from '../services/firebaseConfig';
 
 const styles = StyleSheet.create({
@@ -26,7 +25,16 @@ function ActivityView(props) {
   const { route } = props;
   const { itemid } = route.params;
   const [goodAnswerUser, setGoodAnswerUser] = React.useState(false);
-  const activities = GetActivities(itemid);
+  const [activities, setActivities] = React.useState(null);
+
+  React.useEffect(() => {
+    async function fetchData() {
+      const result = await getActivity(itemid);
+      setActivities(result);
+    }
+    fetchData();
+  }, []);
+
   function handleAnswer(answer, goodAnswer) {
     if (answer === goodAnswer) {
       setGoodAnswerUser(true);
@@ -51,7 +59,7 @@ function ActivityView(props) {
         <View style={styles.container}>
           <Text>{question.title}</Text>
           {answerTab.map((answer) => (
-            <Button mode="contained" key={answer} onPress={() => { handleAnswer(answer, question.goodAnswer); }}>{answer}</Button>
+            <Button key={answer} mode="contained" onPress={() => { handleAnswer(answer, question.goodAnswer); }}>{answer}</Button>
           ))}
           <Dialog visible={visible}>
             {goodAnswerUser && (
