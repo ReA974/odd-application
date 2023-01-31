@@ -74,7 +74,7 @@ export default function App() {
               }}
             />
             <Stack.Screen
-              name="Challege"
+              name="Challenge"
               component={ChallengeView}
               options={{
                 title: '', headerShown: true, headerBackButtonMenuEnabled: true, headerBackTitle: 'Map', headerTransparent: true,

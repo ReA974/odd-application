@@ -98,11 +98,15 @@ function Map({ navigation }) {
   }, []);
 
   function handleActivity(marker) {
+    // eslint-disable-next-line no-unused-vars
     const close = CloseMarker(location.coords, marker);
     const { id } = marker;
+    /*
     if (close !== null) {
       navigation.navigate('Activites', { itemid: id });
     }
+    */
+    navigation.navigate('Activites', { itemid: id });
   }
 
   if (location !== null) {
