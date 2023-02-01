@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import React from 'react';
 import {
-  Button, Dialog, TextInput, RadioButton,
+  Button, Dialog, TextInput, Checkbox,
 } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
@@ -49,10 +49,9 @@ function ChallengeView(props) {
   const [text, setText] = React.useState('');
   const [goodAnswerUser, setGoodAnswerUser] = React.useState(false);
   const [image, setImage] = React.useState(null);
-  const [odd, setOdd] = React.useState(null);
+  const [ArrayODD, setArrayODD] = React.useState([]);
   const [challengeAnswer, setChallengeAnswer] = React.useState(null);
   const user = auth.currentUser;
-
   function pickImage() {
     // take a picture
     ImagePicker.launchCameraAsync({
@@ -68,14 +67,13 @@ function ChallengeView(props) {
     });
   }
 
-  function choisedOOD(arrayODD) {
-    console.log(challengeAnswer);
+  function choosedOOD(arrayODD) {
     updateUserVisitedMarker(user, MarkerId, challengeAnswer, activityAnswered, arrayODD);
     navigation.navigate('Map');
   }
 
   function checkAnswer(goodAnswer) {
-    if (text === goodAnswer) {
+    if (text.toUpperCase() === goodAnswer.toUpperCase()) {
       setGoodAnswerUser(true);
       addAnswer(user, true);
     } else {
@@ -107,9 +105,9 @@ function ChallengeView(props) {
     } else {
       setGoodAnswerUser(false);
       addAnswer(user, false);
-      setVisibleImage(false);
     }
-    setResponsePicture(user, MarkerId, imageURL);
+    const urlFireBase = setResponsePicture(user, MarkerId, imageURL);
+    setChallengeAnswer(urlFireBase);
     setVisibleImage(false);
     setVisibleODD(true);
   }
@@ -117,6 +115,14 @@ function ChallengeView(props) {
   function showODD() {
     setVisible(false);
     setVisibleODD(true);
+  }
+
+  function CheckboxODD(OddId) {
+    if (!ArrayODD.includes(OddId)) {
+      setArrayODD((elem) => [...elem, OddId]);
+    } else {
+      setArrayODD(ArrayODD.filter((elem) => elem !== OddId));
+    }
   }
 
   if (challenge) {
@@ -232,22 +238,20 @@ function ChallengeView(props) {
             <Dialog.Content>
               <Text variant="bodyMedium">A quel ODD ce POI correspond t il ? </Text>
               <Text>{' '}</Text>
-              <RadioButton.Group>
-                {Object.keys(ODDContent).map((key) => (
-                  <View>
-                    <Text>{ODDContent[key].title}</Text>
-                    <RadioButton
-                      key={key}
-                      value={key}
-                      status={odd === key ? 'checked' : 'unchecked'}
-                      onPress={() => { setOdd(key); }}
-                    />
-                  </View>
-                ))}
-              </RadioButton.Group>
+              {Object.keys(ODDContent).map((key) => (
+                <View>
+                  <Text>{ODDContent[key].title}</Text>
+                  <Checkbox
+                    key={key.slice(3)}
+                    value={key.slice(3)}
+                    status={ArrayODD.includes(key.slice(3)) ? 'checked' : 'unchecked'}
+                    onPress={() => { CheckboxODD(key.slice(3)); }}
+                  />
+                </View>
+              ))}
             </Dialog.Content>
             <Dialog.Actions>
-              <Button mode="contained" onPress={() => { choisedOOD(odd); }}>Envoyer</Button>
+              <Button mode="contained" onPress={() => { choosedOOD(ArrayODD); }}>Envoyer</Button>
             </Dialog.Actions>
           </ScrollView>
         </Dialog>

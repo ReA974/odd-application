@@ -69,6 +69,7 @@ const styles = StyleSheet.create({
   },
 });
 
+// add props to Map function
 function Map({
   navigation, startDate, endDate, hours, minutes, seconds, clearTimer,
 }) {
@@ -240,10 +241,6 @@ Map.propTypes = {
 Map.defaultProps = {
   startDate: undefined,
   endDate: undefined,
-};
-
-Map.propTypes = {
-  navigation: PropTypes.instanceOf(Object).isRequired,
 };
 
 export default Map;

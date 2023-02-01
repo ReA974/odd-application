@@ -144,25 +144,23 @@ export async function addAnswer(user, goodAnswer) {
   }
 }
 // eslint-disable-next-line max-len
-export async function updateUserVisitedMarker(user, markerId, tempChallengeAnswer, questionAnswer, odd) {
+export async function updateUserVisitedMarker(user, markerId, tempChallengeAnswer, tempQuestionAnswer, choosedODD) {
   const phoneNumber = getPhoneNumber(user);
   const challengeAnswer = tempChallengeAnswer === undefined ? '' : tempChallengeAnswer;
+  const questionAnswer = tempQuestionAnswer === undefined ? '' : tempQuestionAnswer;
   await setDoc(doc(db, 'GROUP', phoneNumber, 'VISIT', markerId), {
     challengeAnswer,
     questionAnswer,
-    odd,
+    choosedODD,
     timestamp: new Date(),
   }, { merge: true });
 }
 
-// upload image to firebase storage and return the url
+// upload image to firebase storage
 export const setResponsePicture = async (user, markerId, image) => {
-  console.log('user', user);
-  console.log('markerId', markerId);
-  console.log('image', image);
   const phoneNumber = getPhoneNumber(user);
-  const storageRef = ref(storage, `GROUP/${phoneNumber}/VISIT/${markerId}/challengePhoto`);
+  const storageRef = ref(storage, `GROUP/${phoneNumber}/VISIT/${markerId}`);
   await uploadBytes(storageRef, image);
-  const url = await getDownloadURL(storageRef);
-  return url;
+  const response = await uploadBytes(storageRef, image);
+  return response.metadata.fullPath;
 };

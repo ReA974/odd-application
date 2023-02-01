@@ -181,9 +181,9 @@ function TropheeScreen() {
                 )}
               </Text>
               {nbrQuestions !== undefined && (
-              <Text variant="titleSmall" style={{ fontWeight: '200' }}>
-                Continue ainsi
-              </Text>
+                <Text variant="titleSmall" style={{ fontWeight: '200' }}>
+                  Continue ainsi
+                </Text>
               )}
             </Card.Content>
           </Card>
