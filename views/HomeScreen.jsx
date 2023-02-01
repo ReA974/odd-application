@@ -3,7 +3,7 @@ import * as React from 'react';
 import {
   StyleSheet, View, Image, TouchableOpacity,
 } from 'react-native';
-import { Text, Card, Button } from 'react-native-paper';
+import { Text, Card } from 'react-native-paper';
 import PropTypes from 'prop-types';
 import logoAssociation from '../assets/logoAssociation.png';
 import learning from '../assets/learning.png';

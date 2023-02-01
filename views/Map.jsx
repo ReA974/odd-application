@@ -5,14 +5,17 @@ import * as React from 'react';
 import {
   Platform, View, Text, Image, StyleSheet, ActivityIndicator,
 } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE, Callout } from 'react-native-maps';
+import MapView, {
+  Marker, PROVIDER_GOOGLE, Callout, CalloutSubview,
+} from 'react-native-maps';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import * as Location from 'expo-location';
 import { useEffect, useState } from 'react';
 import WebView from 'react-native-webview';
+import PropTypes from 'prop-types';
 import { auth } from '../services/firebaseConfig';
 import { getAllPOI, getVisitedPOI } from '../services/firebaseQueries';
-import useCloseMarker from '../services/useCloseMarker';
+import CloseMarker from '../services/CloseMarker';
 
 const styles = StyleSheet.create({
   container: {
@@ -51,7 +54,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function Map() {
+function Map({ navigation }) {
   const [user] = useAuthState(auth);
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -94,15 +97,17 @@ function Map() {
     })();
   }, []);
 
-  useEffect(() => {
-    if (location !== null) {
-      const markerCloseTome = useCloseMarker(location.coords);
-      if (markerCloseTome.length > 0) {
-        // eslint-disable-next-line no-console
-        console.log(markerCloseTome);
-      }
+  function handleActivity(marker) {
+    // eslint-disable-next-line no-unused-vars
+    const close = CloseMarker(location.coords, marker);
+    const { id } = marker;
+    /*
+    if (close !== null) {
+      navigation.navigate('Activites', { itemid: id });
     }
-  }, [location]);
+    */
+    navigation.navigate('Activites', { itemid: id });
+  }
 
   if (location !== null) {
     // show road names
@@ -165,25 +170,46 @@ function Map() {
                                                       : partenariats}
                     style={visitedPOI.includes(elem.id) ? styles.imageDisabled : styles.image}
                   />
-                  <Callout tooltip>
-                    <View style={styles.popover}>
-                      {!isAndroid && elem.imageURL !== undefined && (
-                        <Image
-                          source={{ uri: elem.imageURL }}
-                          style={styles.imageOnPopover}
-                        />
-                      )}
-                      {isAndroid && elem.imageURL !== undefined && (
-                        <WebView
-                          source={{ uri: elem.imageURL }}
-                          style={styles.imageOnPopover}
-                        />
-                      )}
-                      <Text style={{ textAlign: 'center' }}>
-                        {elem.name}
-                      </Text>
-                    </View>
-                  </Callout>
+                  {!isAndroid && (
+                    <Callout tooltip>
+                      <View style={styles.popover}>
+                        <>
+                          {elem.imageURL !== undefined && (
+                            <Image
+                              source={{ uri: elem.imageURL }}
+                              style={styles.imageOnPopover}
+                            />
+                          )}
+                          <CalloutSubview
+                            style={styles.phoneContainer}
+                            onPress={() => {
+                              handleActivity(elem);
+                            }}
+                          >
+                            <Text style={styles.phoneText}>Voir les activités</Text>
+                          </CalloutSubview>
+                          <Text style={{ textAlign: 'center' }}>
+                            {elem.name}
+                          </Text>
+                        </>
+                      </View>
+                    </Callout>
+                  )}
+                  {isAndroid && (
+                    <Callout tooltip onPress={() => { handleActivity(elem); }}>
+                      <View style={styles.popover}>
+                        {elem.imageURL !== undefined && (
+                          <WebView
+                            source={{ uri: elem.imageURL }}
+                            style={styles.imageOnPopover}
+                          />
+                        )}
+                        <Text style={{ textAlign: 'center' }}>
+                          {elem.name}
+                        </Text>
+                      </View>
+                    </Callout>
+                  )}
                 </Marker>
               ))
             )
@@ -198,5 +224,9 @@ function Map() {
     );
   }
 }
+
+Map.propTypes = {
+  navigation: PropTypes.instanceOf(Object).isRequired,
+};
 
 export default Map;
