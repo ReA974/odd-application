@@ -58,7 +58,7 @@ function ChallengeView(props) {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.5,
     }).then((result) => {
       if (!result.canceled) {
         setImage(result.assets[0].uri);
@@ -97,7 +97,7 @@ function ChallengeView(props) {
     setVisible(true);
   }
 
-  function checkPictureAnswer(goodAnswer, imageURL) {
+  async function checkPictureAnswer(goodAnswer, imageURL) {
     if (goodAnswer === true) {
       setGoodAnswerUser(true);
       addAnswer(user, true);
@@ -106,7 +106,8 @@ function ChallengeView(props) {
       setGoodAnswerUser(false);
       addAnswer(user, false);
     }
-    const urlFireBase = setResponsePicture(user, MarkerId, imageURL);
+    const urlFireBase = await setResponsePicture(user, MarkerId, imageURL);
+    console.log(urlFireBase);
     setChallengeAnswer(urlFireBase);
     setVisibleImage(false);
     setVisibleODD(true);

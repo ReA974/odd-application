@@ -158,9 +158,11 @@ export async function updateUserVisitedMarker(user, markerId, tempChallengeAnswe
 
 // upload image to firebase storage
 export const setResponsePicture = async (user, markerId, image) => {
+  const response = await fetch(image);
+  const blobFile = await response.blob();
   const phoneNumber = getPhoneNumber(user);
   const storageRef = ref(storage, `GROUP/${phoneNumber}/VISIT/${markerId}`);
-  await uploadBytes(storageRef, image);
-  const response = await uploadBytes(storageRef, image);
-  return response.metadata.fullPath;
+  uploadBytes(storageRef, blobFile);
+  const imageURL = await uploadBytes(storageRef, image);
+  return imageURL.metadata.fullPath;
 };
