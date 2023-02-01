@@ -43,6 +43,7 @@ function ActivityView(props) {
       addAnswer(user, false);
       setGoodAnswerUser(false);
     }
+    activities[0].activityAnswered = answer;
     setVisible(true);
   }
 

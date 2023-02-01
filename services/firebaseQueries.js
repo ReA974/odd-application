@@ -3,9 +3,9 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable import/prefer-default-export */
 import {
-  collection, getDocs, getDoc, doc, updateDoc, increment,
+  collection, getDocs, getDoc, doc, updateDoc, increment, setDoc,
 } from 'firebase/firestore';
-import { ref, getDownloadURL } from 'firebase/storage';
+import { ref, getDownloadURL, uploadBytes } from 'firebase/storage';
 import { db, storage } from './firebaseConfig';
 
 export async function getImageByPOI(id) {
@@ -125,7 +125,7 @@ export async function getActivity(id) {
       }
     }
   }
-
+  activityArray[0].MarkerId = id;
   return activityArray;
 }
 
@@ -143,3 +143,26 @@ export async function addAnswer(user, goodAnswer) {
     });
   }
 }
+// eslint-disable-next-line max-len
+export async function updateUserVisitedMarker(user, markerId, tempChallengeAnswer, questionAnswer, odd) {
+  const phoneNumber = getPhoneNumber(user);
+  const challengeAnswer = tempChallengeAnswer === undefined ? '' : tempChallengeAnswer;
+  await setDoc(doc(db, 'GROUP', phoneNumber, 'VISIT', markerId), {
+    challengeAnswer,
+    questionAnswer,
+    odd,
+    timestamp: new Date(),
+  }, { merge: true });
+}
+
+// upload image to firebase storage and return the url
+export const setResponsePicture = async (user, markerId, image) => {
+  console.log('user', user);
+  console.log('markerId', markerId);
+  console.log('image', image);
+  const phoneNumber = getPhoneNumber(user);
+  const storageRef = ref(storage, `GROUP/${phoneNumber}/VISIT/${markerId}/challengePhoto`);
+  await uploadBytes(storageRef, image);
+  const url = await getDownloadURL(storageRef);
+  return url;
+};

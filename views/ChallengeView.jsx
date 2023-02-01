@@ -1,16 +1,17 @@
 /* eslint-disable max-len */
 import PropTypes from 'prop-types';
 import {
-  StyleSheet, View, Text, Image,
+  StyleSheet, View, Text, Image, ScrollView,
 } from 'react-native';
 import React from 'react';
 import {
-  Button, Dialog, TextInput,
+  Button, Dialog, TextInput, RadioButton,
 } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
-import { addAnswer } from '../services/firebaseQueries';
+import { addAnswer, updateUserVisitedMarker, setResponsePicture } from '../services/firebaseQueries';
 import { auth } from '../services/firebaseConfig';
+import ODDContent from './helpers/ODDContent';
 
 const styles = StyleSheet.create({
   container: {
@@ -38,13 +39,18 @@ function ChallengeView(props) {
   const navigation = useNavigation();
   const { route } = props;
   const { activity } = route.params;
+  const { MarkerId } = activity[0];
+  const { activityAnswered } = activity[0];
   const { challenge } = activity[0];
   const answerTab = [];
   const [visible, setVisible] = React.useState(false);
+  const [visibleODD, setVisibleODD] = React.useState(false);
+  const [visibleImage, setVisibleImage] = React.useState(false);
   const [text, setText] = React.useState('');
   const [goodAnswerUser, setGoodAnswerUser] = React.useState(false);
   const [image, setImage] = React.useState(null);
-  const [visibleImage, setVisibleImage] = React.useState(false);
+  const [odd, setOdd] = React.useState(null);
+  const [challengeAnswer, setChallengeAnswer] = React.useState(null);
   const user = auth.currentUser;
 
   function pickImage() {
@@ -62,6 +68,12 @@ function ChallengeView(props) {
     });
   }
 
+  function choisedOOD(arrayODD) {
+    console.log(challengeAnswer);
+    updateUserVisitedMarker(user, MarkerId, challengeAnswer, activityAnswered, arrayODD);
+    navigation.navigate('Map');
+  }
+
   function checkAnswer(goodAnswer) {
     if (text === goodAnswer) {
       setGoodAnswerUser(true);
@@ -70,6 +82,7 @@ function ChallengeView(props) {
       setGoodAnswerUser(false);
       addAnswer(user, false);
     }
+    setChallengeAnswer(text);
     setVisible(true);
   }
 
@@ -77,23 +90,33 @@ function ChallengeView(props) {
     if (answer === goodAnswer) {
       setGoodAnswerUser(true);
       addAnswer(user, true);
+      updateUserVisitedMarker(user, MarkerId);
     } else {
       setGoodAnswerUser(false);
       addAnswer(user, false);
     }
+    setChallengeAnswer(answer);
     setVisible(true);
   }
 
-  function checkPictureAnswer(goodAnswer) {
+  function checkPictureAnswer(goodAnswer, imageURL) {
     if (goodAnswer === true) {
       setGoodAnswerUser(true);
       addAnswer(user, true);
-      navigation.navigate('Map');
+      updateUserVisitedMarker(user, MarkerId);
     } else {
       setGoodAnswerUser(false);
       addAnswer(user, false);
       setVisibleImage(false);
     }
+    setResponsePicture(user, MarkerId, imageURL);
+    setVisibleImage(false);
+    setVisibleODD(true);
+  }
+
+  function showODD() {
+    setVisible(false);
+    setVisibleODD(true);
   }
 
   if (challenge) {
@@ -175,8 +198,8 @@ function ChallengeView(props) {
             {challenge.goodAnswer && <Image source={{ uri: challenge.goodAnswerUrl }} style={{ width: 200, height: 200 }} />}
           </Dialog.Content>
           <Dialog.Actions>
-            <Button mode="contained" onPress={() => { checkPictureAnswer(true); }}>Oui</Button>
-            <Button mode="contained" onPress={() => { checkPictureAnswer(false); }}>Non</Button>
+            <Button mode="contained" onPress={() => { checkPictureAnswer(true, image); }}>Oui</Button>
+            <Button mode="contained" onPress={() => { checkPictureAnswer(false, image); }}>Non</Button>
           </Dialog.Actions>
         </Dialog>
         <Dialog visible={visible}>
@@ -187,7 +210,7 @@ function ChallengeView(props) {
                 <Text variant="bodyMedium">Bonne réponse !</Text>
               </Dialog.Content>
               <Dialog.Actions>
-                <Button mode="contained" onPress={() => { navigation.navigate('Map'); }}>Ok</Button>
+                <Button mode="contained" onPress={() => { showODD(); }}>Ok</Button>
               </Dialog.Actions>
             </>
           )}
@@ -198,10 +221,35 @@ function ChallengeView(props) {
                 <Text variant="bodyMedium">Mauvaise réponse !</Text>
               </Dialog.Content>
               <Dialog.Actions>
-                <Button mode="contained" onPress={() => { setVisible(false); }}>Ok</Button>
+                <Button mode="contained" onPress={() => { showODD(); }}>Ok</Button>
               </Dialog.Actions>
             </>
           )}
+        </Dialog>
+        <Dialog visible={visibleODD}>
+          <Dialog.Title>Choix ODD</Dialog.Title>
+          <ScrollView>
+            <Dialog.Content>
+              <Text variant="bodyMedium">A quel ODD ce POI correspond t il ? </Text>
+              <Text>{' '}</Text>
+              <RadioButton.Group>
+                {Object.keys(ODDContent).map((key) => (
+                  <View>
+                    <Text>{ODDContent[key].title}</Text>
+                    <RadioButton
+                      key={key}
+                      value={key}
+                      status={odd === key ? 'checked' : 'unchecked'}
+                      onPress={() => { setOdd(key); }}
+                    />
+                  </View>
+                ))}
+              </RadioButton.Group>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button mode="contained" onPress={() => { choisedOOD(odd); }}>Envoyer</Button>
+            </Dialog.Actions>
+          </ScrollView>
         </Dialog>
       </>
     );
@@ -225,6 +273,8 @@ ChallengeView.propTypes = {
           badAnswers: PropTypes.arrayOf(PropTypes.string),
           goodAnswerUrl: PropTypes.string,
         }),
+        MarkerId: PropTypes.string,
+        activityAnswered: PropTypes.string,
       })),
     }),
   }).isRequired,
