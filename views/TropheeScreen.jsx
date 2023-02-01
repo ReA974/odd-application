@@ -2,6 +2,7 @@
 /* eslint-disable no-nested-ternary */
 import * as React from 'react';
 import { useEffect, useState, useRef } from 'react';
+import { doc, onSnapshot } from 'firebase/firestore';
 import CircularProgress from 'react-native-circular-progress-indicator';
 import LottieView from 'lottie-react-native';
 import {
@@ -10,9 +11,9 @@ import {
 import {
   StyleSheet, View, ActivityIndicator,
 } from 'react-native';
-import { auth } from '../services/firebaseConfig';
+import { db, auth } from '../services/firebaseConfig';
 import { getDeltaTime } from '../services/timerSession';
-import { getVisitedPOI, getAllPOI } from '../services/firebaseQueries';
+import { getVisitedPOI, getAllPOI, getPhoneNumber } from '../services/firebaseQueries';
 
 const styles = StyleSheet.create({
   loading: {
@@ -84,7 +85,7 @@ function TropheeScreen() {
   const user = auth.currentUser;
 
   function toHoursAndMinutes(totalMinutes) {
-    if (!Number.isNaN(tempsLastSession)) {
+    if (!Number.isNaN(totalMinutes)) {
       const hours = Math.floor(totalMinutes / 60);
       const minutes = Math.round((totalMinutes % 60));
       return `${hours}h${minutes > 0 ? ` ${minutes}min` : ''}`;
@@ -95,7 +96,8 @@ function TropheeScreen() {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const resultDelta = await getDeltaTime(user);
+      let resultDelta = await getDeltaTime(user);
+      resultDelta = toHoursAndMinutes(resultDelta);
       setTempsLastSession(resultDelta);
       const resultVisitedPOI = await getVisitedPOI(user);
       setVisitedPOI(resultVisitedPOI);
@@ -113,6 +115,15 @@ function TropheeScreen() {
         }
       }, 1);
     })();
+  }, []);
+
+  useEffect(() => {
+    const phoneNumber = getPhoneNumber(user);
+    const unsub = onSnapshot(doc(db, 'GROUP', phoneNumber), (temp) => {
+      setNbrGoodAnswers(temp.data().goodAnswer);
+      setNbrQuestions(temp.data().answer);
+    });
+    return () => unsub();
   }, []);
   return (
     !loading ? (
@@ -154,7 +165,7 @@ function TropheeScreen() {
             <Card.Content>
               <View style={{ alignItems: 'center' }}>
                 <CircularProgress
-                  value={((nbrGoodAnswers / nbrQuestions) * 100)}
+                  value={nbrQuestions !== undefined ? ((nbrGoodAnswers / nbrQuestions) * 100) : 0}
                   inActiveStrokeColor="#00CED1"
                   inActiveStrokeOpacity={0.2}
                   progressValueColor="black"
@@ -163,13 +174,17 @@ function TropheeScreen() {
                   radius={55}
                 />
               </View>
-              <Text variant="titleMedium" style={{ fontWeight: '600' }}>Bonne réponses</Text>
+              <Text variant="titleMedium" style={{ fontWeight: '600' }}>{nbrQuestions !== undefined ? 'Bonne Réponses' : 'Aucune réponse'}</Text>
               <Text variant="titleSmall" style={{ fontWeight: '200' }}>
-                {(nbrGoodAnswers / nbrQuestions) > 0.7 ? 'Excellent résultat !' : (nbrGoodAnswers / nbrQuestions) < 0.5 ? 'Courage !' : "C'est bien !"}
+                {nbrQuestions !== undefined && (
+                  (nbrGoodAnswers / nbrQuestions) > 0.7 ? 'Excellent résultat !' : (nbrGoodAnswers / nbrQuestions) < 0.5 ? 'Courage !' : "C'est bien !"
+                )}
               </Text>
+              {nbrQuestions !== undefined && (
               <Text variant="titleSmall" style={{ fontWeight: '200' }}>
                 Continue ainsi
               </Text>
+              )}
             </Card.Content>
           </Card>
         </View>
@@ -178,10 +193,10 @@ function TropheeScreen() {
             <Card.Content style={{ paddingTop: 10 }}>
               <Text variant="titleLarge" style={{ fontWeight: '500' }}>Temps dernier parcours</Text>
               <Text
-                variant={Number.isNaN(tempsLastSession) ? 'titleLarge' : 'displayMedium'}
+                variant={Number.isNaN(tempsLastSession) || tempsLastSession === undefined ? 'titleLarge' : 'displayMedium'}
                 style={{ color: '#00CED1', marginTop: 5, marginBottom: 5 }}
               >
-                {toHoursAndMinutes(tempsLastSession) || 'Aucune session réalisée'}
+                {tempsLastSession || 'Aucune session réalisée'}
 
               </Text>
               <Text variant="bodyLarge">

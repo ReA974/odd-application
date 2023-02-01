@@ -19,6 +19,7 @@ import WebView from 'react-native-webview';
 import { auth } from '../services/firebaseConfig';
 import { getAllPOI, getVisitedPOI } from '../services/firebaseQueries';
 import CloseMarker from '../services/CloseMarker';
+import * as timerSession from '../services/timerSession';
 
 const styles = StyleSheet.create({
   container: {
@@ -59,8 +60,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     backgroundColor: 'rgba(255, 255, 255, 1)',
     borderRadius: 10,
-    width: 100,
-    height: 30,
+    width: 120,
+    height: 35,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 70,
@@ -211,7 +212,7 @@ function Map({
                 <Text variant="bodyMedium">Souhaitez-vous arrêter la session ?</Text>
               </Dialog.Content>
               <Dialog.Actions>
-                <Button onPress={() => { hideDialog(); clearTimer(); navigation.navigate('Trophees'); }}>Oui</Button>
+                <Button onPress={() => { hideDialog(); clearTimer(); timerSession.stopTimer(user); navigation.navigate('Trophees'); }}>Oui</Button>
                 <Button onPress={hideDialog}>Non</Button>
               </Dialog.Actions>
             </Dialog>
