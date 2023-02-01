@@ -67,7 +67,7 @@ function HomeScreen({
         <View style={styles.column}>
           {startDate !== undefined && endDate !== undefined
             ? (
-              <TouchableOpacity activeOpacity={0.5} onPress={() => { startTimer(); timerSession.startTimer(user); navigation.navigate('Map', { refresh: true }); }}>
+              <TouchableOpacity activeOpacity={0.5} onPress={async () => { await startTimer(); await timerSession.startTimer(user); navigation.navigate('Map', { refresh: true }); }}>
                 <Card key={1} style={styles.cardMini}>
                   <Card.Content style={{ paddingTop: 10 }}>
                     <Text variant="bodyLarge" style={{ fontWeight: '600', color: 'white' }}>Démarrer une session</Text>
@@ -79,7 +79,7 @@ function HomeScreen({
             : (
               <TouchableOpacity
                 activeOpacity={0.5}
-                onPress={() => { clearTimer(); timerSession.stopTimer(user); navigation.navigate('Trophees'); }}
+                onPress={async () => { clearTimer(); await timerSession.stopTimer(user); navigation.navigate('Trophees'); }}
               >
                 <Card key={1} style={styles.cardMini}>
                   <Card.Content style={{ paddingTop: 10 }}>

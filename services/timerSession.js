@@ -28,14 +28,12 @@ async function getDeltaTime(user) {
   let Delta = 0;
   const phoneNumber = `0${user.phoneNumber.substring(3)}`;
   const docRef = doc(db, 'GROUP', phoneNumber);
-  setTimeout(async () => {
-    const docSnap = await getDoc(docRef);
-    const data = docSnap.data();
-    const start = data.startSession;
-    const end = data.endSession;
-    const delta = end - start;
-    Delta = delta / 60;
-  }, 200);
+  const docSnap = await getDoc(docRef);
+  const data = docSnap.data();
+  const start = data.startSession;
+  const end = data.endSession;
+  const delta = end - start;
+  Delta = delta / 60;
   return Delta;
 }
 

@@ -63,7 +63,7 @@ export default function TabNavigator() {
       }
       if (tempStartDate !== undefined) {
         setStartDate(tempStartDate);
-        startTimer(true, tempStartDate);
+        await startTimer(true, tempStartDate);
       }
     })();
     return () => clearInterval(intervalID);
@@ -97,7 +97,7 @@ export default function TabNavigator() {
         {() => (
           <HomeScreen
             navigation={navigation}
-            startTimer={() => startTimer(false)}
+            startTimer={async () => startTimer(false)}
             clearTimer={() => clear()}
             startDate={startDate}
             endDate={endDate}

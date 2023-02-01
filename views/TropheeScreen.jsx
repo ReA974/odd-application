@@ -96,9 +96,6 @@ function TropheeScreen() {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      let resultDelta = await getDeltaTime(user);
-      resultDelta = toHoursAndMinutes(resultDelta);
-      setTempsLastSession(resultDelta);
       const resultVisitedPOI = await getVisitedPOI(user);
       setVisitedPOI(resultVisitedPOI);
       const tempPOI = await getAllPOI();
@@ -108,6 +105,9 @@ function TropheeScreen() {
         });
       });
       setTotalPOI(tempPOI.length);
+      let resultDelta = await getDeltaTime(user);
+      resultDelta = toHoursAndMinutes(resultDelta);
+      setTempsLastSession(resultDelta);
       setLoading(false);
       setTimeout(() => {
         if (animationRef.current) {
