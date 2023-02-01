@@ -69,19 +69,33 @@ export async function getVisitedPOI(user) {
   return POIVisitedArray;
 }
 
+export async function getStartDate(user) {
+  let startSession;
+  let endSession;
+  const phoneNumber = getPhoneNumber(user);
+  const tempDoc = await getDoc(doc(db, 'GROUP', phoneNumber));
+  if (tempDoc) {
+    startSession = tempDoc.data().startSession;
+    if (tempDoc.data().endSession) {
+      endSession = tempDoc.data().endSession;
+    }
+  }
+  return [startSession.seconds, endSession];
+}
+
 export async function getAllPOI() {
   const POIArray = [];
   const tempCollection = [];
   const querySnapshot = await getDocs(collection(db, 'POI'));
 
-  querySnapshot.forEach((doc1) => {
-    const object = doc1.data();
-    object.id = doc1.id;
+  querySnapshot.forEach((tempDoc) => {
+    const object = tempDoc.data();
+    object.id = tempDoc.id;
     tempCollection.push(object);
   });
 
-  for (const doc2 of tempCollection) {
-    const object = doc2;
+  for (const doc1 of tempCollection) {
+    const object = doc1;
     const url = await getImageByPOI(object.id);
     object.imageURL = url;
     POIArray.push(object);
