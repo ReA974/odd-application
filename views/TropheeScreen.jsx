@@ -97,9 +97,13 @@ function TropheeScreen() {
       const resultVisitedPOI = await getVisitedPOI(user);
       setVisitedPOI(resultVisitedPOI);
       const tempPOI = await getAllPOI();
-      tempPOI.forEach((elem) => {
-        elem.linkedODD.forEach((odd) => {
-          setODDDiscovered((prev) => new Set(prev.add(odd)));
+      resultVisitedPOI.forEach((visited) => {
+        tempPOI.forEach((poi) => {
+          if (poi.id === visited) {
+            poi.linkedODD.forEach((odd) => {
+              setODDDiscovered((prev) => new Set(prev.add(odd)));
+            });
+          }
         });
       });
       setTotalPOI(tempPOI.length);

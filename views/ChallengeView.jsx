@@ -239,7 +239,7 @@ function ChallengeView(props) {
           <Dialog.Title>Choix ODD</Dialog.Title>
           <ScrollView>
             <Dialog.Content>
-              <Text variant="bodyMedium" style={{ marginBottom: 10 }}>A quel ODD ce POI correspond t il ? </Text>
+              <Text variant="bodyMedium" style={{ marginBottom: 20, fontWeight: '500' }}>A quel ODD ce POI correspond t il ? </Text>
               {Object.keys(ODDContent).map((key) => (
                 <View key={`view${key}`}>
                   <Text key={`text${key}`}>{ODDContent[key].name}</Text>
