@@ -11,6 +11,7 @@ import TropheeScreen from './views/TropheeScreen';
 import TabNavigator from './views/TabNavigator';
 import ActivityView from './views/ActivityView';
 import ChallengeView from './views/ChallengeView';
+import DescriptionView from './views/DescriptionView';
 
 const Stack = createNativeStackNavigator();
 
@@ -27,6 +28,13 @@ export default function App() {
               component={TropheeScreen}
               options={{
                 title: '', headerShown: true, headerBackButtonMenuEnabled: true, headerBackTitle: 'Accueil', headerTransparent: true,
+              }}
+            />
+            <Stack.Screen
+              name="Description"
+              component={DescriptionView}
+              options={{
+                title: '', headerShown: true, headerBackButtonMenuEnabled: true, headerBackTitle: 'Map', headerTransparent: true,
               }}
             />
             <Stack.Screen

@@ -53,7 +53,7 @@ function ChallengeView(props) {
   const [challengeAnswer, setChallengeAnswer] = React.useState(null);
   const user = auth.currentUser;
   async function pickImage() {
-    const res = await ImagePicker.requestCameraPermissionsAsync();
+    await ImagePicker.requestCameraPermissionsAsync();
     // take a picture
     ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -178,7 +178,7 @@ function ChallengeView(props) {
               )}
               {answerTab.map((answer) => (
                 <Button
-                  style={{ margin: 5 }}
+                  style={{ margin: 5, backgroundColor: '#4CB1FF' }}
                   key={answer}
                   mode="contained"
                   onPress={() => { checkMultipleChoiceAnswer(answer, challenge.goodAnswer); }}
@@ -192,7 +192,7 @@ function ChallengeView(props) {
         {challenge.type === 'photo' && (
           <View style={styles.container}>
             <Text>{challenge.title}</Text>
-            <Button mode="contained" icon="camera" onPress={() => { pickImage(); }}>Prendre une photo</Button>
+            <Button style={{ backgroundColor: '#4CB1FF' }} mode="contained" icon="camera" onPress={() => { pickImage(); }}>Prendre une photo</Button>
           </View>
         )}
         <Dialog visible={visibleImage}>
@@ -204,8 +204,8 @@ function ChallengeView(props) {
             {challenge.goodAnswer && <Image source={{ uri: challenge.goodAnswerUrl }} style={{ width: '90%', height: 200 }} />}
           </Dialog.Content>
           <Dialog.Actions>
-            <Button mode="contained" onPress={() => { checkPictureAnswer(true, image); }}> Oui </Button>
-            <Button mode="contained" onPress={() => { checkPictureAnswer(false, image); }}> Non </Button>
+            <Button style={{ backgroundColor: '#4CB1FF' }} mode="contained" onPress={() => { checkPictureAnswer(true, image); }}> Oui </Button>
+            <Button style={{ backgroundColor: '#B22222' }} mode="contained" onPress={() => { checkPictureAnswer(false, image); }}> Non </Button>
           </Dialog.Actions>
         </Dialog>
         <Dialog visible={visible}>
@@ -216,7 +216,7 @@ function ChallengeView(props) {
                 <Text variant="bodyMedium">Bonne réponse !</Text>
               </Dialog.Content>
               <Dialog.Actions>
-                <Button mode="contained" onPress={() => { showODD(); }}>Ok</Button>
+                <Button style={{ backgroundColor: '#4CB1FF !important' }} mode="contained" onPress={() => { showODD(); }}>Ok</Button>
               </Dialog.Actions>
             </>
           )}
@@ -227,7 +227,7 @@ function ChallengeView(props) {
                 <Text variant="bodyMedium">Mauvaise réponse !</Text>
               </Dialog.Content>
               <Dialog.Actions>
-                <Button mode="contained" onPress={() => { showODD(); }}>Ok</Button>
+                <Button style={{ backgroundColor: '#4CB1FF !important' }} mode="contained" onPress={() => { showODD(); }}>Ok</Button>
               </Dialog.Actions>
             </>
           )}

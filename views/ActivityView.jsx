@@ -1,11 +1,14 @@
 /* eslint-disable max-len */
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import {
+  ScrollView, StyleSheet, View,
+} from 'react-native';
 import PropTypes from 'prop-types';
 import {
-  Button, Dialog,
+  Button, Dialog, Text,
 } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { addAnswer, getActivity } from '../services/firebaseQueries';
 import { auth } from '../services/firebaseConfig';
 
@@ -15,6 +18,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingTop: 50,
   },
 });
 
@@ -23,10 +27,9 @@ function ActivityView(props) {
   const navigation = useNavigation();
   const [visible, setVisible] = React.useState(false);
   const { route } = props;
-  const { itemid } = route.params;
+  const { itemid, description } = route.params;
   const [goodAnswerUser, setGoodAnswerUser] = React.useState(false);
   const [activities, setActivities] = React.useState(null);
-
   React.useEffect(() => {
     async function fetchData() {
       const result = await getActivity(itemid);
@@ -57,13 +60,17 @@ function ActivityView(props) {
       });
       answerTab.sort(() => Math.random() - 0.5);
       return (
-        <View style={styles.container}>
-          <Text>{question.title}</Text>
-          {answerTab.map((answer) => (
-            <Button style={{ margin: 10 }} key={answer} mode="contained" onPress={() => { handleAnswer(answer, question.goodAnswer); }}>{answer}</Button>
-          ))}
-          <Dialog visible={visible}>
-            {goodAnswerUser && (
+        <SafeAreaView style={styles.container}>
+          <ScrollView>
+            <View style={{ margin: 10, alignItems: 'center' }}>
+              <Text style={{ textAlign: 'justify', marginBottom: 10 }} variant="labelMedium">{ description }</Text>
+              <Text style={{ textAlign: 'center' }} variant="headlineSmall">{question.title}</Text>
+              {answerTab.map((answer) => (
+                <Button style={{ margin: 10, width: 280, backgroundColor: '#4CB1FF' }} key={answer} mode="contained" onPress={() => { handleAnswer(answer, question.goodAnswer); }}>{answer}</Button>
+              ))}
+            </View>
+            <Dialog visible={visible}>
+              {goodAnswerUser && (
               <>
                 <Dialog.Title>Bravo !</Dialog.Title>
                 <Dialog.Content>
@@ -72,8 +79,8 @@ function ActivityView(props) {
                   </Text>
                 </Dialog.Content>
               </>
-            )}
-            {!goodAnswerUser && (
+              )}
+              {!goodAnswerUser && (
               <>
                 <Dialog.Title>Perdu !</Dialog.Title>
                 <Dialog.Content>
@@ -84,12 +91,14 @@ function ActivityView(props) {
                   </Text>
                 </Dialog.Content>
               </>
-            )}
-            <Dialog.Actions>
-              <Button onPress={() => { navigation.navigate('Challenge', { activity: activities }); }}>Ok</Button>
-            </Dialog.Actions>
-          </Dialog>
-        </View>
+              )}
+              <Dialog.Actions>
+                <Button style={{ backgroundColor: '#4CB1FF' }} onPress={() => { navigation.navigate('Challenge', { activity: activities }); }}>Ok</Button>
+              </Dialog.Actions>
+            </Dialog>
+          </ScrollView>
+        </SafeAreaView>
+
       );
     }
   }
@@ -104,6 +113,7 @@ ActivityView.propTypes = {
   route: PropTypes.shape({
     params: PropTypes.shape({
       itemid: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
     }).isRequired,
   }).isRequired,
 };

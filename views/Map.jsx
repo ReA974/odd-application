@@ -119,12 +119,12 @@ function Map({
   function handleActivity(marker) {
     // eslint-disable-next-line no-unused-vars
     const close = CloseMarker(location.coords, marker);
-    const { id } = marker;
+    const { id, imageURL } = marker;
     /*
     if (close !== null && visitedPOI.includes(id)) {
       navigation.navigate('Activites', { itemid: id });
     } */
-    navigation.navigate('Activites', { itemid: id });
+    navigation.navigate('Description', { itemid: id, description: marker.description, image: imageURL });
   }
 
   if (location !== null) {
