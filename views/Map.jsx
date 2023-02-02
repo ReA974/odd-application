@@ -111,9 +111,9 @@ function Map({
 
   useEffect(() => {
     (async () => {
-      /*
       const tempVisited = await getVisitedPOI(user);
       setVisitedPOI(tempVisited);
+      /*
       if (poiList) {
         if (tempVisited.length === poiList.length) {
           clearTimer();
