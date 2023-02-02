@@ -80,7 +80,10 @@ export async function getStartDate(user) {
       endSession = tempDoc.data().endSession;
     }
   }
-  return [startSession.seconds, endSession];
+  if (startSession) {
+    return [startSession.seconds, endSession];
+  }
+  return undefined;
 }
 
 export async function getAllPOI() {

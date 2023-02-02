@@ -59,13 +59,16 @@ export default function TabNavigator() {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const [tempStartDate, tempEndDate] = await getStartDate(user);
-      if (tempEndDate !== undefined) {
-        setEndDate(tempEndDate.seconds);
-      }
-      if (tempStartDate !== undefined && tempEndDate === undefined) {
-        setStartDate(tempStartDate);
-        await startTimer(true, tempStartDate);
+      const result = await getStartDate(user);
+      if (result !== undefined) {
+        const [tempStartDate, tempEndDate] = result;
+        if (tempEndDate !== undefined) {
+          setEndDate(tempEndDate.seconds);
+        }
+        if (tempStartDate !== undefined && tempEndDate === undefined) {
+          setStartDate(tempStartDate);
+          await startTimer(true, tempStartDate);
+        }
       }
       setLoading(false);
     })();
