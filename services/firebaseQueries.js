@@ -118,7 +118,7 @@ export async function getActivity(id) {
       }
     }
     if (activityArray[0].challenge.goodAnswer !== undefined) {
-    // check if goodAnswer is an image in string
+      // check if goodAnswer is an image in string
       if (activityArray[0].challenge.goodAnswer.includes('CHALLENGE')) {
         const url = await getImageForChallenge(activityArray[0].challenge.goodAnswer);
         if (url !== undefined) {
@@ -146,11 +146,13 @@ export async function addAnswer(user, goodAnswer) {
   }
 }
 // eslint-disable-next-line max-len
-export async function updateUserVisitedMarker(user, markerId, tempChallengeAnswer, tempQuestionAnswer, choosedODD) {
+export async function updateUserVisitedMarker(user, markerId, tempChallengeAnswer, tempQuestionAnswer, choosedODD, tempChallengePhoto) {
   const phoneNumber = getPhoneNumber(user);
   const challengeAnswer = tempChallengeAnswer === undefined ? '' : tempChallengeAnswer;
   const questionAnswer = tempQuestionAnswer === undefined ? '' : tempQuestionAnswer;
+  const challengePhoto = tempChallengePhoto === undefined ? '' : tempChallengePhoto;
   await setDoc(doc(db, 'GROUP', phoneNumber, 'VISIT', markerId), {
+    challengePhoto,
     challengeAnswer,
     questionAnswer,
     choosedODD,

@@ -51,6 +51,7 @@ function ChallengeView(props) {
   const [image, setImage] = React.useState(null);
   const [ArrayODD, setArrayODD] = React.useState([]);
   const [challengeAnswer, setChallengeAnswer] = React.useState(null);
+  const [challengePhoto, setChallengePhoto] = React.useState(null);
   const user = auth.currentUser;
   async function pickImage() {
     await ImagePicker.requestCameraPermissionsAsync();
@@ -69,7 +70,7 @@ function ChallengeView(props) {
   }
 
   function choosedOOD(arrayODD) {
-    updateUserVisitedMarker(user, MarkerId, challengeAnswer, activityAnswered, arrayODD);
+    updateUserVisitedMarker(user, MarkerId, challengeAnswer, activityAnswered, arrayODD, challengePhoto);
     navigation.navigate('Map');
   }
 
@@ -106,7 +107,8 @@ function ChallengeView(props) {
       addAnswer(user, false);
     }
     const urlFireBase = await setResponsePicture(user, MarkerId, imageURL);
-    setChallengeAnswer(urlFireBase);
+    setChallengeAnswer(goodAnswer);
+    setChallengePhoto(urlFireBase);
     setVisibleImage(false);
     setVisibleODD(true);
   }
@@ -240,7 +242,7 @@ function ChallengeView(props) {
               <Text variant="bodyMedium" style={{ marginBottom: 10 }}>A quel ODD ce POI correspond t il ? </Text>
               {Object.keys(ODDContent).map((key) => (
                 <View key={`view${key}`}>
-                  <Text key={`text${key}`}>{ODDContent[key].title}</Text>
+                  <Text key={`text${key}`}>{ODDContent[key].name}</Text>
                   <Checkbox
                     key={key}
                     value={key.slice(3)}
