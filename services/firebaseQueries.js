@@ -110,18 +110,20 @@ export async function getActivity(id) {
     const activity = result.data();
     activityArray.push(activity);
   }
-  if (activityArray[0].challenge.image !== undefined) {
-    const url = await getImageForChallenge(activityArray[0].challenge.image);
-    if (url !== undefined) {
-      activityArray[0].challenge.imageURL = url;
-    }
-  }
-  if (activityArray[0].challenge.goodAnswer !== undefined) {
-    // check if goodAnswer is an image in string
-    if (activityArray[0].challenge.goodAnswer.includes('CHALLENGE')) {
-      const url = await getImageForChallenge(activityArray[0].challenge.goodAnswer);
+  if (activityArray[0].challenge) {
+    if (activityArray[0].challenge.image !== undefined) {
+      const url = await getImageForChallenge(activityArray[0].challenge.image);
       if (url !== undefined) {
-        activityArray[0].challenge.goodAnswerUrl = url;
+        activityArray[0].challenge.imageURL = url;
+      }
+    }
+    if (activityArray[0].challenge.goodAnswer !== undefined) {
+    // check if goodAnswer is an image in string
+      if (activityArray[0].challenge.goodAnswer.includes('CHALLENGE')) {
+        const url = await getImageForChallenge(activityArray[0].challenge.goodAnswer);
+        if (url !== undefined) {
+          activityArray[0].challenge.goodAnswerUrl = url;
+        }
       }
     }
   }

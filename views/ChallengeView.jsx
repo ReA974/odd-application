@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    paddingTop: 250,
+    paddingTop: 120,
     flex: 1,
     backgroundColor: 'white',
     alignItems: 'center',
@@ -52,7 +52,8 @@ function ChallengeView(props) {
   const [ArrayODD, setArrayODD] = React.useState([]);
   const [challengeAnswer, setChallengeAnswer] = React.useState(null);
   const user = auth.currentUser;
-  function pickImage() {
+  async function pickImage() {
+    const res = await ImagePicker.requestCameraPermissionsAsync();
     // take a picture
     ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -88,7 +89,6 @@ function ChallengeView(props) {
     if (answer === goodAnswer) {
       setGoodAnswerUser(true);
       addAnswer(user, true);
-      updateUserVisitedMarker(user, MarkerId);
     } else {
       setGoodAnswerUser(false);
       addAnswer(user, false);
@@ -101,13 +101,11 @@ function ChallengeView(props) {
     if (goodAnswer === true) {
       setGoodAnswerUser(true);
       addAnswer(user, true);
-      updateUserVisitedMarker(user, MarkerId);
     } else {
       setGoodAnswerUser(false);
       addAnswer(user, false);
     }
     const urlFireBase = await setResponsePicture(user, MarkerId, imageURL);
-    console.log(urlFireBase);
     setChallengeAnswer(urlFireBase);
     setVisibleImage(false);
     setVisibleODD(true);
@@ -119,10 +117,11 @@ function ChallengeView(props) {
   }
 
   function CheckboxODD(OddId) {
-    if (!ArrayODD.includes(OddId)) {
-      setArrayODD((elem) => [...elem, OddId]);
+    const odd = parseInt(OddId, 10);
+    if (!ArrayODD.includes(odd)) {
+      setArrayODD((elem) => [...elem, odd]);
     } else {
-      setArrayODD(ArrayODD.filter((elem) => elem !== OddId));
+      setArrayODD(ArrayODD.filter((elem) => elem !== odd));
     }
   }
 
@@ -140,8 +139,7 @@ function ChallengeView(props) {
           <>
             <View style={styles.title}>
               {challenge.title !== undefined && (
-                <Text variant="headlineMedium" style={{ fontWeight: '600', marginBottom: 15 }}>
-                  {' '}
+                <Text variant="headlineMedium" style={{ fontWeight: '600', marginBottom: 10 }}>
                   {challenge.title}
                 </Text>
               )}
@@ -154,12 +152,12 @@ function ChallengeView(props) {
             </View>
             <View style={styles.reponse}>
               <TextInput
-                style={{ width: '70%' }}
+                style={{ width: '70%', marginBottom: 5 }}
                 label="Réponse"
-                value={Text}
+                value={text}
                 onChangeText={(tempText) => setText(tempText)}
               />
-              <Button mode="contained" onPress={() => { checkAnswer(challenge.goodAnswer); }}>Ok</Button>
+              <Button disabled={text === ''} mode="contained" onPress={() => { checkAnswer(challenge.goodAnswer); }}>Valider</Button>
             </View>
           </>
         )}
@@ -180,6 +178,7 @@ function ChallengeView(props) {
               )}
               {answerTab.map((answer) => (
                 <Button
+                  style={{ margin: 5 }}
                   key={answer}
                   mode="contained"
                   onPress={() => { checkMultipleChoiceAnswer(answer, challenge.goodAnswer); }}
@@ -199,14 +198,14 @@ function ChallengeView(props) {
         <Dialog visible={visibleImage}>
           <Dialog.Title>Vérification</Dialog.Title>
           <Dialog.Content>
-            <Text variant="bodyMedium">La photo correspond t-elle a la bonne réponse ? </Text>
-            {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+            <Text style={{ marginBottom: '1%' }} variant="bodyMedium">La photo correspond t-elle a la bonne réponse ? </Text>
+            {image && <Image source={{ uri: image }} style={{ width: '90%', height: 200 }} />}
             <Text>{' '}</Text>
-            {challenge.goodAnswer && <Image source={{ uri: challenge.goodAnswerUrl }} style={{ width: 200, height: 200 }} />}
+            {challenge.goodAnswer && <Image source={{ uri: challenge.goodAnswerUrl }} style={{ width: '90%', height: 200 }} />}
           </Dialog.Content>
           <Dialog.Actions>
-            <Button mode="contained" onPress={() => { checkPictureAnswer(true, image); }}>Oui</Button>
-            <Button mode="contained" onPress={() => { checkPictureAnswer(false, image); }}>Non</Button>
+            <Button mode="contained" onPress={() => { checkPictureAnswer(true, image); }}> Oui </Button>
+            <Button mode="contained" onPress={() => { checkPictureAnswer(false, image); }}> Non </Button>
           </Dialog.Actions>
         </Dialog>
         <Dialog visible={visible}>
@@ -233,7 +232,7 @@ function ChallengeView(props) {
             </>
           )}
         </Dialog>
-        <Dialog visible={visibleODD}>
+        <Dialog visible={visibleODD} style={{ justifyContent: 'center', maxHeight: 500 }}>
           <Dialog.Title>Choix ODD</Dialog.Title>
           <ScrollView>
             <Dialog.Content>
@@ -245,7 +244,7 @@ function ChallengeView(props) {
                   <Checkbox
                     key={key.slice(3)}
                     value={key.slice(3)}
-                    status={ArrayODD.includes(key.slice(3)) ? 'checked' : 'unchecked'}
+                    status={ArrayODD.includes(parseInt(key.slice(3), 10)) ? 'checked' : 'unchecked'}
                     onPress={() => { CheckboxODD(key.slice(3)); }}
                   />
                 </View>

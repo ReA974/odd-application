@@ -4,3 +4,9 @@
 <string>Allow $(PRODUCT_NAME) to use your location</string>
 <key>NSLocationWhenInUseUsageDescription</key>
 <string>Allow $(PRODUCT_NAME) to use your location</string>
+<key>NSPhotoLibraryAddUsageDescription</key>
+<string>Allow $(PRODUCT_NAME) to access your camera</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>Allow $(PRODUCT_NAME) to access your camera</string>
+<key>NSCameraUsageDescription</key>
+<string>Allow $(PRODUCT_NAME) to access your camera</string>

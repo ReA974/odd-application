@@ -60,7 +60,7 @@ function ActivityView(props) {
         <View style={styles.container}>
           <Text>{question.title}</Text>
           {answerTab.map((answer) => (
-            <Button key={answer} mode="contained" onPress={() => { handleAnswer(answer, question.goodAnswer); }}>{answer}</Button>
+            <Button style={{ margin: 10 }} key={answer} mode="contained" onPress={() => { handleAnswer(answer, question.goodAnswer); }}>{answer}</Button>
           ))}
           <Dialog visible={visible}>
             {goodAnswerUser && (

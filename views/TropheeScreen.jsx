@@ -70,8 +70,6 @@ const styles = StyleSheet.create({
   },
 });
 
-// TODO : % bonne réponses
-
 function TropheeScreen() {
   const [oddDiscovered, setODDDiscovered] = useState(new Set());
   const animationRef = useRef();

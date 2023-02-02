@@ -13,6 +13,7 @@ import MapView, {
 } from 'react-native-maps';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import PropTypes from 'prop-types';
+import { useIsFocused } from '@react-navigation/native';
 import * as Location from 'expo-location';
 import { useEffect, useState } from 'react';
 import WebView from 'react-native-webview';
@@ -67,6 +68,11 @@ const styles = StyleSheet.create({
     marginTop: 70,
     marginLeft: 10,
   },
+  phoneText: {
+    textAlign: 'center',
+    alignItems: 'center',
+    color: 'blue',
+  },
 });
 
 // add props to Map function
@@ -82,6 +88,7 @@ function Map({
   const showDialog = () => setVisible(true);
   const hideDialog = () => setVisible(false);
   const isAndroid = Platform.OS === 'android';
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     (async () => {
@@ -102,15 +109,21 @@ function Map({
     })();
   }, []);
 
+  useEffect(() => {
+    (async () => {
+      const tempVisited = await getVisitedPOI(user);
+      setVisitedPOI(tempVisited);
+    })();
+  }, [isFocused]);
+
   function handleActivity(marker) {
     // eslint-disable-next-line no-unused-vars
     const close = CloseMarker(location.coords, marker);
     const { id } = marker;
     /*
-    if (close !== null) {
+    if (close !== null && visitedPOI.includes(id)) {
       navigation.navigate('Activites', { itemid: id });
-    }
-    */
+    } */
     navigation.navigate('Activites', { itemid: id });
   }
 
@@ -166,6 +179,9 @@ function Map({
                                 style={styles.imageOnPopover}
                               />
                             )}
+                            <Text style={{ textAlign: 'center' }}>
+                              {elem.name}
+                            </Text>
                             <CalloutSubview
                               style={styles.phoneContainer}
                               onPress={() => {
@@ -174,9 +190,6 @@ function Map({
                             >
                               <Text style={styles.phoneText}>Voir les activités</Text>
                             </CalloutSubview>
-                            <Text style={{ textAlign: 'center' }}>
-                              {elem.name}
-                            </Text>
                           </>
                         </View>
                       </Callout>
@@ -213,7 +226,7 @@ function Map({
                 <Text variant="bodyMedium">Souhaitez-vous arrêter la session ?</Text>
               </Dialog.Content>
               <Dialog.Actions>
-                <Button onPress={() => { hideDialog(); clearTimer(); timerSession.stopTimer(user); navigation.navigate('Trophees'); }}>Oui</Button>
+                <Button onPress={async () => { hideDialog(); clearTimer(); await timerSession.stopTimer(user); navigation.navigate('Trophees'); }}>Oui</Button>
                 <Button onPress={hideDialog}>Non</Button>
               </Dialog.Actions>
             </Dialog>
