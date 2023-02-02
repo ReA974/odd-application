@@ -63,7 +63,6 @@ function ActivityView(props) {
         <SafeAreaView style={styles.container}>
           <ScrollView>
             <View style={{ margin: 10, alignItems: 'center' }}>
-              <Text style={{ textAlign: 'justify', marginBottom: 10 }} variant="labelMedium">{ description }</Text>
               <Text style={{ textAlign: 'center' }} variant="headlineSmall">{question.title}</Text>
               {answerTab.map((answer) => (
                 <Button style={{ margin: 10, width: 280, backgroundColor: '#4CB1FF' }} key={answer} mode="contained" onPress={() => { handleAnswer(answer, question.goodAnswer); }}>{answer}</Button>
