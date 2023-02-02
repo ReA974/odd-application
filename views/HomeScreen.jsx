@@ -65,7 +65,7 @@ function HomeScreen({
       <Text variant="displayMedium" style={{ marginBottom: '10%', color: '#1a489c' }}>ODDyssée</Text>
       <View style={styles.content}>
         <View style={styles.column}>
-          {startDate !== undefined && endDate !== undefined
+          {(startDate === undefined) || endDate !== undefined
             ? (
               <TouchableOpacity activeOpacity={0.5} onPress={async () => { await startTimer(); await timerSession.startTimer(user); navigation.navigate('Map', { refresh: true }); }}>
                 <Card key={1} style={styles.cardMini}>

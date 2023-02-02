@@ -27,7 +27,7 @@ function ActivityView(props) {
   const navigation = useNavigation();
   const [visible, setVisible] = React.useState(false);
   const { route } = props;
-  const { itemid, description } = route.params;
+  const { itemid } = route.params;
   const [goodAnswerUser, setGoodAnswerUser] = React.useState(false);
   const [activities, setActivities] = React.useState(null);
   React.useEffect(() => {
@@ -68,34 +68,34 @@ function ActivityView(props) {
                 <Button style={{ margin: 10, width: 280, backgroundColor: '#4CB1FF' }} key={answer} mode="contained" onPress={() => { handleAnswer(answer, question.goodAnswer); }}>{answer}</Button>
               ))}
             </View>
-            <Dialog visible={visible}>
-              {goodAnswerUser && (
-              <>
-                <Dialog.Title>Bravo !</Dialog.Title>
-                <Dialog.Content>
-                  <Text variant="bodyMedium">
-                    Vous avez trouvé la bonne réponse
-                  </Text>
-                </Dialog.Content>
-              </>
-              )}
-              {!goodAnswerUser && (
-              <>
-                <Dialog.Title>Perdu !</Dialog.Title>
-                <Dialog.Content>
-                  <Text variant="bodyMedium">
-                    La bonne réponse était
-                    {' '}
-                    {question.goodAnswer}
-                  </Text>
-                </Dialog.Content>
-              </>
-              )}
-              <Dialog.Actions>
-                <Button style={{ backgroundColor: '#4CB1FF' }} onPress={() => { navigation.navigate('Challenge', { activity: activities }); }}>Ok</Button>
-              </Dialog.Actions>
-            </Dialog>
           </ScrollView>
+          <Dialog visible={visible}>
+            {goodAnswerUser && (
+            <>
+              <Dialog.Title>Bravo !</Dialog.Title>
+              <Dialog.Content>
+                <Text variant="bodyMedium">
+                  Vous avez trouvé la bonne réponse
+                </Text>
+              </Dialog.Content>
+            </>
+            )}
+            {!goodAnswerUser && (
+            <>
+              <Dialog.Title>Perdu !</Dialog.Title>
+              <Dialog.Content>
+                <Text variant="bodyMedium">
+                  La bonne réponse était
+                  {' '}
+                  {question.goodAnswer}
+                </Text>
+              </Dialog.Content>
+            </>
+            )}
+            <Dialog.Actions>
+              <Button style={{ backgroundColor: '#4CB1FF' }} onPress={() => { navigation.navigate('Challenge', { activity: activities }); }}>Ok</Button>
+            </Dialog.Actions>
+          </Dialog>
         </SafeAreaView>
 
       );
@@ -112,7 +112,6 @@ ActivityView.propTypes = {
   route: PropTypes.shape({
     params: PropTypes.shape({
       itemid: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired,
     }).isRequired,
   }).isRequired,
 };

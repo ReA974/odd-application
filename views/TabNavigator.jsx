@@ -20,6 +20,7 @@ export default function TabNavigator() {
   const [endDate, setEndDate] = useState(undefined);
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
+  const [loading, setLoading] = useState(true);
   const [seconds, setSeconds] = useState(0);
   const navigation = useNavigation();
 
@@ -57,19 +58,22 @@ export default function TabNavigator() {
 
   useEffect(() => {
     (async () => {
+      setLoading(true);
       const [tempStartDate, tempEndDate] = await getStartDate(user);
       if (tempEndDate !== undefined) {
         setEndDate(tempEndDate.seconds);
       }
-      if (tempStartDate !== undefined) {
+      if (tempStartDate !== undefined && tempEndDate === undefined) {
         setStartDate(tempStartDate);
         await startTimer(true, tempStartDate);
       }
+      setLoading(false);
     })();
     return () => clearInterval(intervalID);
   }, []);
 
   return (
+    !loading && (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
@@ -119,5 +123,7 @@ export default function TabNavigator() {
       </Tab.Screen>
       <Tab.Screen name="ODD" component={ODDScreen} options={{ headerShown: false }} />
     </Tab.Navigator>
+    )
+
   );
 }

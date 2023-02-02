@@ -116,6 +116,7 @@ function TropheeScreen() {
   }, []);
 
   useEffect(() => {
+    setLoading(true);
     const phoneNumber = getPhoneNumber(user);
     const unsub = onSnapshot(doc(db, 'GROUP', phoneNumber), (temp) => {
       setNbrGoodAnswers(temp.data().goodAnswer);

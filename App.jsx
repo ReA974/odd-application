@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-else-return */
 /* eslint-disable react/no-unstable-nested-components */
 import React from 'react';
@@ -5,6 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { LogBox } from 'react-native';
 import { auth } from './services/firebaseConfig';
 import PhoneSignIn from './views/PhoneSignIn';
 import TropheeScreen from './views/TropheeScreen';
@@ -16,6 +18,7 @@ import DescriptionView from './views/DescriptionView';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  LogBox.ignoreAllLogs();
   const [user] = useAuthState(auth);
   if (user) {
     return (

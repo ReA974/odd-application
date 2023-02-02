@@ -111,10 +111,18 @@ function Map({
 
   useEffect(() => {
     (async () => {
+      /*
       const tempVisited = await getVisitedPOI(user);
       setVisitedPOI(tempVisited);
+      if (poiList) {
+        if (tempVisited.length === poiList.length) {
+          clearTimer();
+          await timerSession.stopTimer(user);
+        }
+      }
+      */
     })();
-  }, [isFocused]);
+  }, [isFocused, poiList]);
 
   function handleActivity(marker) {
     // eslint-disable-next-line no-unused-vars

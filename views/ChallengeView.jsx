@@ -74,7 +74,7 @@ function ChallengeView(props) {
   }
 
   function checkAnswer(goodAnswer) {
-    if (text.toUpperCase() === goodAnswer.toUpperCase()) {
+    if (text.toUpperCase().replace(/ /g, '') === goodAnswer.toUpperCase().replace(/ /g, '')) {
       setGoodAnswerUser(true);
       addAnswer(user, true);
     } else {
@@ -152,6 +152,7 @@ function ChallengeView(props) {
             </View>
             <View style={styles.reponse}>
               <TextInput
+                key="inputField"
                 style={{ width: '70%', marginBottom: 5 }}
                 label="Réponse"
                 value={text}
@@ -236,13 +237,12 @@ function ChallengeView(props) {
           <Dialog.Title>Choix ODD</Dialog.Title>
           <ScrollView>
             <Dialog.Content>
-              <Text variant="bodyMedium">A quel ODD ce POI correspond t il ? </Text>
-              <Text>{' '}</Text>
+              <Text variant="bodyMedium" style={{ marginBottom: 10 }}>A quel ODD ce POI correspond t il ? </Text>
               {Object.keys(ODDContent).map((key) => (
-                <View>
-                  <Text>{ODDContent[key].title}</Text>
+                <View key={`view${key}`}>
+                  <Text key={`text${key}`}>{ODDContent[key].title}</Text>
                   <Checkbox
-                    key={key.slice(3)}
+                    key={key}
                     value={key.slice(3)}
                     status={ArrayODD.includes(parseInt(key.slice(3), 10)) ? 'checked' : 'unchecked'}
                     onPress={() => { CheckboxODD(key.slice(3)); }}
